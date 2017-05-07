@@ -1,0 +1,21 @@
+{
+  "name": "fiper",
+  "description": "Finance Performance",
+  "main": "",
+  "authors": [
+    "Dinh Khang Tran"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/TranDinhKhang/fiper",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "localStorageDB": "localstoragedb#^2.3.1"
+  }
+}

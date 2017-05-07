@@ -34,9 +34,8 @@
     </div>
 </template>
 <script>
-import Router from "../../router"
-import { Toast } from 'quasar'
-
+import { Toast } from 'quasar'	
+	
 export default {
     data: function() {
         return {
@@ -45,11 +44,14 @@ export default {
         }
 
     },
+    mounted: function(){
+    	// console.log(this.database)
+    },
     methods: {
         login: function() {
             // Take it easy first
             if (this.username == "khangtd" && this.password == "khangtd") {
-                Router.push('/');
+                router.push('/');
             }
             if (this.username.length == 0 || this.password.length == 0) {
                 const dialog = Toast.create.info({

@@ -29,7 +29,8 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     modules: [
       resolve('src'),
-      resolve('node_modules')
+      resolve('node_modules'),
+      resolve('bower_components')
     ],
     alias: config.aliases
   },
