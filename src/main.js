@@ -10,10 +10,12 @@ require('./statics/animate.css')
 import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
-import Database from './global'
+import { Database } from 'settings/settings'
+import Vuelidate from 'vuelidate'
 
+Vue.use(Quasar) // Install Quasar Frameworks
+Vue.use(Vuelidate)
 
-Vue.use(Quasar) // Install Quasar Framework
     // Vue.use(VueMaterial);
 Quasar.start(() => {
     /* eslint-disable no-new */
@@ -33,6 +35,7 @@ Quasar.start(() => {
             });
         },
         router,
-        render: h => h(require('./App'))
+        render: h => h(require('./App')),
+        Vuelidate
     })
 })

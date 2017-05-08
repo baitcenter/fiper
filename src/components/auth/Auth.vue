@@ -9,24 +9,24 @@
                 </div> -->
                 <div class="row wrap width-2of5 justify-center text-center">
                     <div class="auth-form-logo sm-width-3of3">
-                        <img src="../../assets/logo_text.png">
+                        <img src="~assets/logo_text.png">
                     </div>
                 </div>
                 <div class="auth-form-content width-2of5 sm-width-4of5 wrap row auto">
                     <div class="greeting-wrapper row full-width rotateInDownLeft animated">
                         <span class="greeting label pointing-down text-white">explore your FIPER</span>
                     </div>
-                    <div class="floating-label large-gutter">
+                    <!--  <div class="floating-label large-gutter">
                         <input required class="full-width" v-model="username">
                         <label>Username</label>
-                    </div>
+                    </div> -->
                     <div class="floating-label large-gutter">
-                        <input type="password" required class="full-width" v-model="password">
-                        <label>Password</label>
+                        <input type="password" required class="full-width validate" v-model.number="pin_code">
+                        <label>PIN CODE</label>
                     </div>
                     <div class="row justify-center wrap">
                         <button class="primary outline" @click="login()">Login</button>
-                        <button class="secondary" @click="login()">Register</button>
+                        <button class="secondary" @click="register()">Change PIN CODE</button>
                     </div>
                 </div>
             </div>
@@ -34,33 +34,64 @@
     </div>
 </template>
 <script>
-import { Toast } from 'quasar'	
-	
+import {
+    Toast
+} from 'quasar'
+import Database from 'settings/database'
+import Router from 'root_dir/router'
+
 export default {
     data: function() {
         return {
-            username: '',
-            password: ''
+            pin_code: '',
         }
-
     },
-    mounted: function(){
-    	// console.log(this.database)
+    mounted: function() {
+    	Database.get('pin_code').then(function(doc){
+    		console.log(doc)
+    		if(doc.is_authed){
+    			Router.push('/home')
+    		}
+    	}).catch(function(err){
+    		console.log(err)
+    	})
     },
     methods: {
         login: function() {
-            // Take it easy first
-            if (this.username == "khangtd" && this.password == "khangtd") {
-                router.push('/');
-            }
-            if (this.username.length == 0 || this.password.length == 0) {
+            if (this.pin_code.length == 0) {
                 const dialog = Toast.create.info({
                     title: 'Warning',
                     html: 'You need to fill the required fields.'
                 })
+                return false
             }
+            var cur_pincode = ''
+            var that = this
+                // Take it easy first
+            Database.get("pin_code").then(function(doc) {
+                console.log(doc)
+                cur_pincode = doc.CODE
+                if (that.pin_code == cur_pincode) {
+                    console.log("Logged in" + " " + "[" + cur_pincode + " != " + that.pin_code + "]")
+                    Database.put({
+                        _id: doc._id,
+                        _rev: doc._rev,
+                        is_authed: true,
+                        CODE: doc.CODE
+                    })
+                    Router.push("/home")
+                } else {
+                    console.log("Wrong pin_code [" + cur_pincode + " != " + that.pin_code + "]")
+                }
+            }).catch(function(err) {
+                console.log(err)
+            });
+        },
+        register: function(){
+        	Router.push('/pinreset')
         }
-    }
+    },
+    components: {}
 
 }
 </script>

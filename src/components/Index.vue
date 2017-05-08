@@ -1,35 +1,14 @@
 <template>
-    <q-layout>
-        <div slot="header" class="toolbar">
-            <button class="hide-on-drawer-visible" @click="$refs.drawer.open()">
-                <i>menu</i>
-            </button>
-            <q-toolbar-title :padding="2">
-                Hi Khang, you spent 20% the plan.
-            </q-toolbar-title>
-        </div>
-        <q-drawer ref="drawer">
-            <div class="list platform-delimiter">
-                <div class="list-header">
-                    Hi Khang,
-                </div>
-                <q-drawer-link icon="mail" to="/account">View Report</q-drawer-link>
-                <q-drawer-link icon="alarm" to="/alarms">View Payments</q-drawer-link>
-            </div>
-        </q-drawer>
-        <!--
-      Replace following "div" with
-      "<router-view class="layout-view">" component
-      if using subRoutes
-    -->
-        <div class="layout-view"></div>
-    </q-layout>
+    <router-view></router-view>
 </template>
 <script>
 import {
     Utils
 } from 'quasar'
-import Router from '../router';
+
+import Router from '../router'
+import Database from 'settings/database'
+
 export default {
     data() {
             return {
@@ -43,7 +22,18 @@ export default {
 
         },
         mounted() {
-            Router.push('/login');
+            Database.get("pin_code").then(function(doc) {
+                console.log(doc)
+                if (!doc.is_authed) {
+
+                    Router.push('/login')
+
+                } else {
+                    Router.push('/home')
+                }
+            }).catch(function(err) {
+                Router.push('/login')
+            })
         },
         beforeDestroy() {
 
