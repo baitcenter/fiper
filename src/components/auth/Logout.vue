@@ -19,7 +19,7 @@ export default {
                 CODE: doc.CODE
             }).then(function(res) {
                 console.log(res)
-                Router.push('/')
+                Router.push('/login')
             }).catch(function(err) {
                 console.log(err)
             })

@@ -15,13 +15,17 @@ import Vuelidate from 'vuelidate'
 
 router.beforeEach((to, from, next) => {
     console.log(to.fullPath)
-
+    console.log(from.fullPath)
+    if (to.fullPath == '/') {
+    	next('/home')
+    }
     Database.get('pin_code').then(function(doc) {
         console.log(doc)
 
         if (!doc.is_authed) {
             if (to.fullPath == '/login') {
                 next()
+                
             }
             next('/login')
         } else {
