@@ -23,7 +23,6 @@
                     </div>
                 </div> -->
                 <success v-if="change_success"></success>
-                
                 <div v-if="!change_success" class="auth-form-content width-2of5 sm-width-4of5 wrap row auto">
                     <div class="greeting-wrapper row full-width rotateInDownLeft animated">
                         <span class="greeting label pointing-down text-white">explore your FIPER</span>
@@ -33,15 +32,15 @@
                         <label>Username</label>
                     </div> -->
                     <div class="floating-label large-gutter">
-                        <input type="password" required class="full-width validate" v-model.number="old_pin_code">
+                        <input type="password" required class="full-width validate" v-bind:class="{ 'has-error': $v.form.old_pin_code.$error }" v-model.trim="form.old_pin_code" v-on:input="$v.form.old_pin_code.$touch">
                         <label>OLD PIN CODE</label>
                     </div>
                     <div class="floating-label large-gutter">
-                        <input type="password" required class="full-width validate" v-model.number="re_old_pin_code">
+                        <input type="password" required v-bind:class="{ 'has-error': $v.form.re_old_pin_code.$error }" class="full-width validate" v-model.trim="form.re_old_pin_code" v-on:input="$v.form.re_old_pin_code.$touch">
                         <label>RETYPE OLD PIN CODE</label>
                     </div>
                     <div class="floating-label large-gutter">
-                        <input type="password" required class="full-width validate" v-model.number="new_pin_code">
+                        <input type="password" required class="full-width validate" v-bind:class="{ 'has-error': $v.form.new_pin_code.$error }" v-on:input="$v.form.new_pin_code.$touch" v-model="form.new_pin_code">
                         <label>NEW PIN CODE</label>
                     </div>
                     <div class="row justify-center wrap">
@@ -62,6 +61,7 @@ import {
     sameAs
 } from 'vuelidate/lib/validators'
 
+
 import {
     Toast
 } from 'quasar'
@@ -70,34 +70,39 @@ import Success from 'components/alert/Success'
 export default {
     data: function() {
         return {
-            old_pin_code: '',
-            re_old_pin_code: '',
-            new_pin_code: '',
+            form: {
+                old_pin_code: '',
+                re_old_pin_code: '',
+                new_pin_code: '',
+            },
             change_success: false
         }
     },
     methods: {
         submit: function() {
             var that = this
-            Database.get("pin_code").then(function(doc) {
-                // console.log(doc.CODE)
-                if (that.old_pin_code != that.re_old_pin_code) {
+            that.$v.form.$touch()
+            if (that.$v.form.old_pin_code.$error) {
+                const dialog = Toast.create.info({
+                    title: 'Warning',
+                    html: 'PIN CODE not matching'
+                })
+            } else {
+                if (that.$v.form.re_old_pin_code.$error) {
                     const dialog = Toast.create.info({
                         title: 'Warning',
-                        html: 'PIN CODE not matching'
+                        html: 'Wrong PIN CODE'
                     })
+                    console.log(doc.CODE)
                 } else {
-                    if (doc.CODE != that.old_pin_code) {
-                        const dialog = Toast.create.info({
-                            title: 'Warning',
-                            html: 'Wrong PIN CODE'
-                        })
-                        console.log(doc.CODE)
-                    } else {
+                    Database.get("pin_code").then(function(doc) {
+
+                        // console.log(doc.CODE)
+
                         Database.put({
                             _id: doc._id,
                             _rev: doc._rev,
-                            CODE: that.new_pin_code,
+                            CODE: that.form.new_pin_code,
                             is_authed: doc.is_authed
                         }).then(function(result) {
                             console.log(result)
@@ -107,21 +112,23 @@ export default {
                         }).catch(function(err) {
                             console.log(err)
                         })
-                    }
+
+
+                    }).
+                    catch(function(err) {
+                        console.log(err)
+                    })
                 }
-            }).
-            catch(function(err) {
-                console.log(err)
-            })
+            }
         },
         reset: function() {
-            this.re_old_pin_code = ''
-            this.new_pin_code = ''
-            this.old_pin_code = ''
+            this.form.re_old_pin_code = ''
+            this.form.new_pin_code = ''
+            this.form.old_pin_code = ''
         }
     },
-    validations: function() {
-        return {
+    validations: {
+        form: {
             old_pin_code: {
                 required,
                 minLength: minLength(4)

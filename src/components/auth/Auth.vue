@@ -21,7 +21,7 @@
                         <label>Username</label>
                     </div> -->
                     <div class="floating-label large-gutter">
-                        <input type="password" required class="full-width validate" v-model.number="pin_code">
+                        <input type="password" required v-bind:class="{'has-error': $v.pin_code.$error}" v-on:input="$v.pin_code.$touch" class="full-width validate" v-model.number="pin_code">
                         <label>PIN CODE</label>
                     </div>
                     <div class="row justify-center wrap">
@@ -39,7 +39,10 @@ import {
 } from 'quasar'
 import Database from 'settings/database'
 import Router from 'root_dir/router'
-
+import {
+    required,
+    minLength
+} from 'vuelidate/lib/validators'
 export default {
     data: function() {
         return {
@@ -47,18 +50,13 @@ export default {
         }
     },
     mounted: function() {
-    	Database.get('pin_code').then(function(doc){
-    		console.log(doc)
-    		if(doc.is_authed){
-    			Router.push('/home')
-    		}
-    	}).catch(function(err){
-    		console.log(err)
-    	})
+        
     },
     methods: {
         login: function() {
-            if (this.pin_code.length == 0) {
+            this.$v.pin_code.$touch()
+
+            if (this.$v.pin_code.$error) {
                 const dialog = Toast.create.info({
                     title: 'Warning',
                     html: 'You need to fill the required fields.'
@@ -82,16 +80,27 @@ export default {
                     Router.push("/home")
                 } else {
                     console.log("Wrong pin_code [" + cur_pincode + " != " + that.pin_code + "]")
+                    const dialog = Toast.create.info({
+                    title: 'Warning',
+                    html: 'Wrong password!'
+                })
+                return false
                 }
             }).catch(function(err) {
                 console.log(err)
             });
         },
-        register: function(){
-        	Router.push('/pinreset')
+        register: function() {
+            Router.push('/pinreset')
         }
     },
-    components: {}
+    components: {},
+    validations: {
+        pin_code: {
+            required,
+            minLength: minLength(4)
+        }
+    }
 
 }
 </script>

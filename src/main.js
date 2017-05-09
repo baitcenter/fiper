@@ -13,10 +13,32 @@ import router from './router'
 import { Database } from 'settings/settings'
 import Vuelidate from 'vuelidate'
 
+router.beforeEach((to, from, next) => {
+    console.log(to.fullPath)
+
+    Database.get('pin_code').then(function(doc) {
+        console.log(doc)
+
+        if (!doc.is_authed) {
+            if (to.fullPath == '/login') {
+                next()
+            }
+            next('/login')
+        } else {
+            if (to.fullPath == '/login') {
+                next('/home')
+            }
+            next()
+        }
+    }).catch(function(err) {
+        console.log(err)
+    })
+})
+
 Vue.use(Quasar) // Install Quasar Frameworks
 Vue.use(Vuelidate)
 
-    // Vue.use(VueMaterial);
+// Vue.use(VueMaterial);
 Quasar.start(() => {
     /* eslint-disable no-new */
     new Vue({

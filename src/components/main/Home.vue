@@ -11,14 +11,14 @@ export default {
         }
     },
     mounted: function() {
-        Database.get("pin_code").then(function(doc) {
-            console.log(doc)
-            if (!doc.is_authed) {
-                Router.push('/login')
-            }
-        }).catch(function(err) {
-            Router.push('/login')
-        })
+        // Database.get("pin_code").then(function(doc) {
+        //     console.log(doc)
+        //     if (!doc.is_authed) {
+        //         Router.push('/login')
+        //     }
+        // }).catch(function(err) {
+        //     Router.push('/login')
+        // })
     }
 }
 </script>
