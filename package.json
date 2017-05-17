@@ -1,8 +1,8 @@
 {
-  "name": "quasar-app",
+  "name": "fiper",
   "version": "0.0.1",
-  "description": "A Quasar App",
-  "author": "Your Name",
+  "description": "Fiper - Perfecting your finance",
+  "author": "Tran Dinh Khang",
   "scripts": {
     "clean": "node build/script.clean.js",
     "dev": "node build/script.dev.js",
@@ -17,7 +17,7 @@
     "pouchdb-authentication": "^0.5.5",
     "pouchdb-browser": "^6.2.0",
     "pouchdb-migrate": "^1.1.1",
-    "quasar-framework": "^0.13.4",
+    "quasar-framework": "^0.13.6",
     "roboto-fontface": "^0.7.0",
     "sweetalert2": "^6.6.2",
     "vue": "^2.3.0",

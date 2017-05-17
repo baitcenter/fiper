@@ -9,7 +9,7 @@
                 </div> -->
                 <div v-if="!change_success" class="row wrap width-2of5 justify-center text-center">
                     <div class="auth-form-logo sm-width-3of3">
-                        <img src="~assets/logo_text.png">
+                        <img src="~statics/logo_text.png">
                     </div>
                 </div>
                 <!-- <div id="success" v-if="change_success" class="svg auth-form-content width-2of5 sm-width-4of5 wrap row auto items-center text-center justify-center">
@@ -34,14 +34,17 @@
                     <div class="floating-label large-gutter">
                         <input type="password" required class="full-width validate" v-bind:class="{ 'has-error': $v.form.old_pin_code.$error }" v-model.trim="form.old_pin_code" v-on:input="$v.form.old_pin_code.$touch">
                         <label>OLD PIN CODE</label>
+                        <span class="error-message" v-if="$v.form.old_pin_code.$error"> PIN CODE is required and must have minimum of {{ $v.form.old_pin_code.$params.minLength.min }} characters length. </span>
                     </div>
                     <div class="floating-label large-gutter">
                         <input type="password" required v-bind:class="{ 'has-error': $v.form.re_old_pin_code.$error }" class="full-width validate" v-model.trim="form.re_old_pin_code" v-on:input="$v.form.re_old_pin_code.$touch">
                         <label>RETYPE OLD PIN CODE</label>
+                        <span class="error-message" v-if="$v.form.re_old_pin_code.$error"> PIN CODE is not match</span>
                     </div>
                     <div class="floating-label large-gutter">
                         <input type="password" required class="full-width validate" v-bind:class="{ 'has-error': $v.form.new_pin_code.$error }" v-on:input="$v.form.new_pin_code.$touch" v-model="form.new_pin_code">
                         <label>NEW PIN CODE</label>
+                        <span class="error-message" v-if="$v.form.new_pin_code.$error"> PIN CODE is required and must have minimum of {{ $v.form.new_pin_code.$params.minLength.min }} characters length. </span>
                     </div>
                     <div class="row justify-center wrap">
                         <button class="primary outline" @click="submit()">Submit</button>
@@ -68,6 +71,9 @@ import {
 
 import Success from 'components/alert/Success'
 export default {
+    mounted: function(){
+        console.log(this.$parent)
+    },
     data: function() {
         return {
             form: {
@@ -88,17 +94,16 @@ export default {
                     html: 'PIN CODE not matching'
                 })
             } else {
-                if (that.$v.form.re_old_pin_code.$error) {
-                    const dialog = Toast.create.info({
-                        title: 'Warning',
-                        html: 'Wrong PIN CODE'
-                    })
-                    console.log(doc.CODE)
-                } else {
-                    Database.get("pin_code").then(function(doc) {
+                Database.get("pin_code").then(function(doc) {
 
-                        // console.log(doc.CODE)
-
+                    if (that.form.old_pin_code != doc.CODE) {
+                        const dialog = Toast.create.info({
+                            title: 'Warning',
+                            html: 'Wrong PIN CODE'
+                        })
+                        console.log('pin code: ' + doc.CODE)
+                        // console.log(that.old_pin_code)
+                    } else {
                         Database.put({
                             _id: doc._id,
                             _rev: doc._rev,
@@ -112,14 +117,19 @@ export default {
                         }).catch(function(err) {
                             console.log(err)
                         })
+                    }
+                    // console.log(doc.CODE)
 
 
-                    }).
-                    catch(function(err) {
-                        console.log(err)
-                    })
-                }
+
+                }).
+                catch(function(err) {
+                    console.log(err)
+                })
             }
+
+
+
         },
         reset: function() {
             this.form.re_old_pin_code = ''
@@ -149,39 +159,4 @@ export default {
 }
 </script>
 <style>
-button {
-    margin: 40px 5px;
-}
-
-.auth-form button.outline {
-    color: white;
-}
-
-.auth-form span.greeting {
-    width: auto;
-    height: 50px;
-    margin-left: 0px;
-    background: transparent;
-    border: solid 1px;
-}
-
-.auth-form {
-    color: white!important;
-}
-
-.auth-form label,
-.auth-form input {
-    color: white!important;
-}
-
-.auth-form label {
-    font-size: 13px;
-}
-
-div.fluid-wrapper {
-    width: 100%;
-    height: 100%;
-    background: green;
-    position: absolute;
-}
 </style>

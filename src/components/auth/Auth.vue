@@ -9,7 +9,7 @@
                 </div> -->
                 <div class="row wrap width-2of5 justify-center text-center">
                     <div class="auth-form-logo sm-width-3of3">
-                        <img src="~assets/logo_text.png">
+                        <img src="~statics/logo_text.png">
                     </div>
                 </div>
                 <div class="auth-form-content width-2of5 sm-width-4of5 wrap row auto">
@@ -23,9 +23,10 @@
                     <div class="floating-label large-gutter">
                         <input type="password" required v-bind:class="{'has-error': $v.pin_code.$error}" v-on:input="$v.pin_code.$touch" class="full-width validate" v-model.number="pin_code">
                         <label>PIN CODE</label>
+                        <span class="error-message" v-if="$v.pin_code.$error"> PIN CODE is required and must have minimum of {{ $v.pin_code.$params.minLength.min }} characters length. </span>
                     </div>
                     <div class="row justify-center wrap">
-                        <button class="primary outline" @click="login()">Login</button>
+                        <button id="auth-login" class="primary outline" @click="login()">Login</button>
                         <button class="secondary" @click="register()">Change PIN CODE</button>
                     </div>
                 </div>
@@ -67,7 +68,7 @@ export default {
             var that = this
                 // Take it easy first
             Database.get("pin_code").then(function(doc) {
-                console.log(doc)
+                // console.log(doc)
                 cur_pincode = doc.CODE
                 if (that.pin_code == cur_pincode) {
                     console.log("Logged in" + " " + "[" + cur_pincode + " != " + that.pin_code + "]")
@@ -105,39 +106,5 @@ export default {
 }
 </script>
 <style>
-button {
-    margin: 40px 5px;
-}
 
-.auth-form button.outline {
-    color: white;
-}
-
-.auth-form span.greeting {
-    width: auto;
-    height: 50px;
-    margin-left: 0px;
-    background: transparent;
-    border: solid 1px;
-}
-
-.auth-form {
-    color: white!important;
-}
-
-.auth-form label,
-.auth-form input {
-    color: white!important;
-}
-
-.auth-form label {
-    font-size: 13px;
-}
-
-div.fluid-wrapper {
-    width: 100%;
-    height: 100%;
-    background: green;
-    position: absolute;
-}
 </style>

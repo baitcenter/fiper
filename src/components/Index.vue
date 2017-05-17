@@ -22,18 +22,8 @@ export default {
 
         },
         mounted() {
-            // Database.get("pin_code").then(function(doc) {
-            //     console.log(doc)
-            //     if (!doc.is_authed) {
-
-            //         Router.push('/login')
-
-            //     } else {
-            //         Router.push('/home')
-            //     }
-            // }).catch(function(err) {
-            //     Router.push('/login')
-            // })
+           
+            Router.push('/home')
         },
         beforeDestroy() {
 
