@@ -26,11 +26,8 @@ var router = new VueRouter({
             { path: '/home', component: load('main/Home') },
             { path: '/pinreset', component: load('auth/PinChange'), },
             { path: '/settings', component: load('main/Settings'), },
-
             { path: '/about', component: load('main/About'), },
             { path: '/setup', component: load('main/SetupPin'), },
-
-
             { path: '/logout', component: load('auth/Logout') },
             { path: '*', component: load('Error404') } // Not found
         ]

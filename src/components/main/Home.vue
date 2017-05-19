@@ -7,7 +7,7 @@
             </button>
             <q-toolbar-title :padding="1" class="text-center">
                 <!-- <i class="material-icons">account_balance</i> -->
-                 Finance Performance
+                Finance Performance
             </q-toolbar-title>
         </div>
         <!-- Left-side Drawer -->
@@ -33,14 +33,14 @@
                 </q-drawer-link>
             </div>
         </q-drawer>
-        <button class="primary green circular fixed-bottom-right btn-primary big " @click="$refs.maximizedModal.open()">
+        <button class="primary green circular fixed-bottom-right btn-primary big " @click="$refs.fiperModal.open()">
             <i>add</i>
         </button>
         <!-- Modal add -->
-        <q-modal ref="maximizedModal" class="maximized" :content-css="{padding: '50px'}">
+        <q-modal ref="fiperModal" class="maximized" :content-css="{padding: '50px'}">
             <q-layout>
                 <div slot="header" class="toolbar green">
-                    <button @click="$refs.maximizedModal.close()">
+                    <button @click="$refs.fiperModal.close()">
                         <i>keyboard_arrow_left</i>
                     </button>
                     <q-toolbar-title :padding="1">
@@ -49,8 +49,9 @@
                 </div>
                 <div class="layout-view">
                     <div class="layout-padding">
-                        <add-finance></add-finance>
-                        <button class="primary green" @click="$refs.maximizedModal.close()">Close</button>
+                        <add-finance v-on:set_fiper_data="setFiperData" v-on:submit_fiper_data="setFiperData"></add-finance>
+                        <button class="primary outline green" @click="submitFiperData">Set</button>
+                        <button class="secondary green" @click="closeFiperModal">Back</button>
                     </div>
                 </div>
             </q-layout>
@@ -67,34 +68,67 @@ import AddFinance from 'components/finance-performance/AddNew'
 export default {
     data: function() {
         return {
-            min: 0,
-            max: 20,
-            model: 5,
-            text: ''
+            fiper_data: {
+                data: '',
+                instance: ''
+            }
         }
     },
     mounted: function() {
         // this.$set('text', this.$parent.global_text)
         var that = this
-            // console.log(that.$parent)
-            // console.log(that.$parent.global_text)
-            // Database.get("pin_code").then(function(doc) {
-            //     console.log(doc)
-            //     if (!doc.is_authed) {
-            //         Router.push('/login')
-            //     }
-            // }).catch(function(err) {
-            //     Router.push('/login')
-            // })
     },
     methods: {
-        add: function() {
-            this.model++;
+        setFiperData: function(data) {
             var that = this
-                // console.log(that.$parent.global_text)
-                // that.$parent.$emit('test', 'hello world')
+                // console.log(data)
+            try {
+                that.$set(that.fiper_data, 'data', data.data)
+                that.$set(that.fiper_data, 'instance', data.instance)
+            } catch (err) {
+                console.log(err)
+            }
+        },
+        submitFiperData: function(data) {
+            var that = this
+            console.log(that.fiper_data.data)
+            try {
+                that.fiper_data.instance.$emit('reset_fiper_data')
+                that.addNewFiper()
+            } catch (err) {
+                console.log(err)
+            }
+            that.closeFiperModal()
+            console.log(that.fiper_data.data)
 
-        }
+        },
+        closeFiperModal: function() {
+            var that = this
+            that.$refs.fiperModal.close()
+        },
+        addNewFiper: function() {
+            var that = this
+                // Setup fiper for the first time
+            var data = that.fiper_data.data
+            Database.get("fiper").then(function(fiper) {
+                fiper.data.push(data)
+                return Database.put(fiper).then(function(new_fiper) {
+                        console.log('update ' + new_fiper.id + ' success fully')
+                        console.log(new_fiper)
+                    }).catch(function(err) {
+                        console.log(err)
+                    })
+                    // console.log(doc)
+            }).catch(function(err) {
+                console.log(err)
+                if (err.name === 'not_found') {
+                    console.log("not found, must be initialized")
+                } else { // hm, some other error
+                    throw err
+                }
+
+            })
+        },
     },
     components: {
         AddFinance
