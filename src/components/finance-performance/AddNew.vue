@@ -184,7 +184,7 @@ export default {
                 newVal.fiper_type_name = fiper_type_name
                 that.$emit('set_fiper_data', {
                     data: newVal,
-                    instance: this
+                    instance: that
                 })
             },
             deep: true

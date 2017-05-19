@@ -146,7 +146,11 @@ export default {
         closeFiperModal: function() {
             var that = this
             that.$refs.fiperModal.close()
-            that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
+            try {
+                that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
+            } catch (err) {
+                console.log(err)
+            }
         },
         addNewFiper: function() {
             var that = this
