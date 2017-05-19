@@ -1,47 +1,49 @@
 <template>
-    <div class="flex justify-center">
+    <div>
         <!-- <h1>Your performance</h1> -->
         <!-- Single Selection using Radios -->
-        <div class="add-new-fiper form-wrapper sm-width-5of5 lg-width-3of5">
-            <div class="item two-lines">
-                <i v-if="form.fiper_type == '---'" class="material-icons item-primary">highlight</i>
-                <div class="category-logo material-icons item-primary">
-                    <img v-if="form.fiper_type != '---'" v-bind:src="'statics/category/' + form.fiper_root_type + '_' + form.fiper_type + '.png'" alt="">
+        <div class="add-new-fiper-wrapper full-width flex justify-center">
+            <div class="add-new-fiper form-wrapper sm-width-5of5 width-3of5">
+                <div class="item two-lines">
+                    <i v-if="form.fiper_type == '---'" class="material-icons item-primary">highlight</i>
+                    <div class="category-logo material-icons item-primary">
+                        <img v-if="form.fiper_type != '---'" v-bind:src="'statics/category/' + form.fiper_root_type + '_' + form.fiper_type + '.png'" alt="">
+                    </div>
+                    <div class="item-content" @click="openCategorySelect()">
+                        <q-select class="full-width green fiper-select-type" disable type="radio" v-model="form.fiper_type" :options="fiper_type"></q-select>
+                    </div>
                 </div>
-                <div class="item-content" @click="openCategorySelect()">
-                    <q-select class="full-width green fiper-select-type" disable type="radio" v-model="form.fiper_type" :options="fiper_type"></q-select>
+                <div class="item two-lines">
+                    <i class="material-icons item-primary">monetization_on</i>
+                    <div class="item-content">
+                        <q-numeric class="full-width green" v-model="form.fiper_amount" :min="0"></q-numeric>
+                    </div>
                 </div>
+                <div class="item two-lines">
+                    <i class="material-icons item-primary">account_circle</i>
+                    <div class="item-content">
+                        <input required class="full-width green" v-model="form.fiper_name" placeholder="Name">
+                    </div>
+                </div>
+                <div class="item two-lines">
+                    <i class="material-icons item-primary">edit</i>
+                    <div class="item-content">
+                        <input required class="full-width green" v-model="form.fiper_des" placeholder="Description">
+                    </div>
+                </div>
+                <div class="item two-lines">
+                    <i class="material-icons item-primary">event_note</i>
+                    <div class="item-content">
+                        <q-datetime class="full-width green" v-model="form.fiper_date" type="date"></q-datetime>
+                    </div>
+                </div>
+                <!-- Only Date -->
             </div>
-            <div class="item two-lines">
-                <i class="material-icons item-primary">monetization_on</i>
-                <div class="item-content">
-                    <q-numeric class="full-width green" v-model="form.fiper_amount" :min="0"></q-numeric>
-                </div>
-            </div>
-            <div class="item two-lines">
-                <i class="material-icons item-primary">account_circle</i>
-                <div class="item-content">
-                    <input required class="full-width green" v-model="form.fiper_name" placeholder="Name">
-                </div>
-            </div>
-            <div class="item two-lines">
-                <i class="material-icons item-primary">edit</i>
-                <div class="item-content">
-                    <input required class="full-width green" v-model="form.fiper_des" placeholder="Description">
-                </div>
-            </div>
-            <div class="item two-lines">
-                <i class="material-icons item-primary">event_note</i>
-                <div class="item-content">
-                    <q-datetime class="full-width green" v-model="form.fiper_date" type="date"></q-datetime>
-                </div>
-            </div>
-            <!-- Only Date -->
         </div>
         <!-- Modal to select category -->
-        <q-modal ref="categorySelect" class="add-new-fiper">
-            <q-layout class="primary green">
-                <div slot="header" class="toolbar green	">
+        <q-modal ref="categorySelect" class="maximized">
+            <q-layout class="green">
+                <div slot="header" class="toolbar green">
                     <button @click="closeCategorySelect()">
                         <i>keyboard_arrow_left</i>
                     </button>
@@ -50,16 +52,15 @@
                     </q-toolbar-title>
                     <q-search class="primary green" v-model="category_search.keyword" :debounce="200"></q-search>
                 </div>
-                <q-tabs slot="navigation" default-tab="income" @change="toggleTabs" class="flex primary green">
+                <q-tabs slot="navigation" default-tab="income" @change="toggleTabs" class="flex primary green justify-center">
                     <q-tab name="debts_and_loans" replace>Debts & Loans</q-tab>
                     <q-tab name="income" replace>Income</q-tab>
                     <q-tab name="outcome" exact replace>Outcome</q-tab>
                 </q-tabs>
                 <div class="layout-view">
                     <div class="layout-padding">
-                        <!-- <img src="~statics/category/outcome_friends_and_lovers.png" alt=""> -->
-                        <div class="category-wrapper" v-for="(value,key) in fiper_group_render" v-bind:ref="key">
-                            <div :id="key" style="display: none" class="row wrap items-start justify-around">
+                        <div class="category-wrapper flex" v-for="(value,key) in fiper_group_render" v-bind:ref="key">
+                            <div :id="key" style="display: none" class="row wrap justify-center content-center">
                                 <div v-for="(category,index) in value" class="category grow-1 text-center" @click="selectCategory(key,category.value)">
                                     <img v-bind:src="'statics/category/' + key + '_' + category.value + '.png'" alt="">
                                     <div> {{ category.label }} </div>
@@ -146,13 +147,14 @@ export default {
                 fiper_type_name: ''
             }
             that.$set(that, 'form', data)
-                // console.log(that.form)
+            that.$refs.tab.setActiveTab('income')
+            // console.log(that.form)
         },
-        get_category_from_value: function(value){
-        	var that = this
-        	return that.fiper_type.filter(function(elem){
-        		return elem.value == value
-        	})
+        get_category_from_value: function(value) {
+            var that = this
+            return that.fiper_type.filter(function(elem) {
+                return elem.value == value
+            })
         }
     },
     watch: {

@@ -37,7 +37,7 @@
         <q-modal ref="fiperModal" class="maximized" :content-css="{padding: '50px'}">
             <q-layout>
                 <div slot="header" class="toolbar green">
-                    <button @click="$refs.fiperModal.close()">
+                    <button @click="closeFiperModal">
                         <i>keyboard_arrow_left</i>
                     </button>
                     <q-toolbar-title :padding="1">
@@ -54,7 +54,7 @@
             </q-layout>
         </q-modal>
         <div class="layout-view">
-            <div v-for="(fiper_value,fiper_key) in fiper_data"  class="fiper-wrapper" :id="'fiper-' + fiper_key">
+            <div v-for="(fiper_value,fiper_key) in fiper_data" class="fiper-wrapper" :id="'fiper-' + fiper_key">
                 <div v-for="(value,key) in fiper_value" class="card flex items-center wrap">
                     <div class="fiper-logo-wrapper sm-width-1of3">
                         <img class="fiper-logo" :src="get_fiper_type_img(value)">
@@ -146,6 +146,7 @@ export default {
         closeFiperModal: function() {
             var that = this
             that.$refs.fiperModal.close()
+            that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
         },
         addNewFiper: function() {
             var that = this
