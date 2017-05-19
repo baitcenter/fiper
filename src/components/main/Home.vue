@@ -65,8 +65,8 @@
                     </div>
                     <div class="row auto sm-width-1of3 justify-end">
                         <div class="fiper-action float-right row">
-                            <div class="fiper-logo-wrapper">
-                                <img class="fiper-logo" :src="get_fiper_type_img(value)">
+                            <div class="circular small fiper-logo-wrapper">
+                                <img class="button fiper-logo small" :src="get_fiper_type_img(value)">
                             </div>
                             <button class="green circular small outline"><i class="material-icons">edit</i></button>
                             <button class="green circular small"><i class="material-icons">delete</i></button>
