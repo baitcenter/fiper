@@ -48,7 +48,7 @@
                     <div class="layout-padding">
                         <add-finance v-on:set_fiper_data="setFiperData" v-on:submit_fiper_data="setFiperData"></add-finance>
                         <button class="primary outline green" @click="submitFiperData">Set</button>
-                        <button class="secondary green" @click="closeFiperModal">Back</button>
+                        <button class="secondary green" @click="closeFiperModal">Cancel</button>
                     </div>
                 </div>
             </q-layout>
@@ -145,12 +145,13 @@ export default {
         },
         closeFiperModal: function() {
             var that = this
-            that.$refs.fiperModal.close()
             try {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
             } catch (err) {
                 console.log(err)
             }
+            that.$refs.fiperModal.close()
+
         },
         addNewFiper: function() {
             var that = this
