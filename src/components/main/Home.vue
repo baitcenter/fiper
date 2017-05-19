@@ -55,8 +55,7 @@
         </q-modal>
         <div class="layout-view">
             <div v-for="(fiper_value,fiper_key) in fiper_data" class="fiper-wrapper" :id="'fiper-' + fiper_key">
-                <!-- {{ fiper_root_type[fiper_key].text }} -->
-                <div v-for="(value,key) in fiper_value" class="card flex items-center wrap justify-start">
+                <div v-for="(value,index) in fiper_value" class="card flex items-center wrap justify-start">
                     <div class="row full-width auto">
                         <div class="tag label bg-green text-white float-left">{{ value.fiper_type_name }}</div>
                     </div>
@@ -66,10 +65,10 @@
                     <div class="row auto sm-width-1of3 justify-end">
                         <div class="fiper-action float-right row">
                             <div class="circular small fiper-logo-wrapper">
-                                <img class="button fiper-logo small" :src="get_fiper_type_img(value)">
+                                <img class="button fiper-logo small" :src="get_fiper_type_img(value,index,fiper_key)">
                             </div>
                             <button class="green circular small outline"><i class="material-icons">edit</i></button>
-                            <button class="green circular small"><i class="material-icons">delete</i></button>
+                            <button class="green circular small" @click="removeFiper(value,index,fiper_key)"><i class="material-icons">delete</i></button>
                         </div>
                     </div>
                     <div class="full-width auto">
@@ -140,8 +139,33 @@ export default {
             var date = new Date(fiper.fiper_date)
             return date.toDateString()
         },
-        remove_fiper: function(fiper) {
+        removeFiper: function(fiper, index, fiper_key) {
+            var that = this
+            console.log(index)
+            var new_data = that.fiper_data[fiper_key].splice(index,1)
+            console.log(new_data)
+            that.$set(that.fiper_data, fiper_key, that.fiper_data[fiper_key])
+            console.log()
+            Database.get("fiper").then(function(doc_fiper) {
+                console.log(that.fiper_data)
+                    // that.$set(that, 'fiper_data', fiper.data)
+                console.log(doc_fiper.data)
+                doc_fiper.data = that.fiper_data;
+                console.log(doc_fiper.data)
 
+                // console.log(doc)
+                return Database.put(doc_fiper).then(function(res) {
+                    console.log('Delete ' + fiper.fiper_name + ' successfully')
+                    that.fetch_fiper_data()
+                })
+            }).catch(function(err) {
+                console.log(err)
+                if (err.name === 'not_found') {
+                    console.log("not found, must be initialized")
+                } else { // hm, some other error
+                    throw err
+                }
+            })
         },
         get_fiper_type_img: function(fiper) {
             return STATIC_URL + '/category/' + fiper.fiper_root_type + '_' + fiper.fiper_type + '.png'
