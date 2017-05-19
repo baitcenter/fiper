@@ -129,7 +129,11 @@ Database.get("fiper").then(function(doc) {
     if (err.name === 'not_found') {
         return Database.put({
             _id: "fiper",
-            data: []
+            data: {
+                income: [],
+                outcome: [],
+                debts_and_loans: []
+            }
         }).then(function(res) {
             console.log("Updated " + res.toString() + ', redirect to home')
 

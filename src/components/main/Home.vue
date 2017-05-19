@@ -33,9 +33,6 @@
                 </q-drawer-link>
             </div>
         </q-drawer>
-        <button class="primary green circular fixed-bottom-right btn-primary big " @click="$refs.fiperModal.open()">
-            <i>add</i>
-        </button>
         <!-- Modal add -->
         <q-modal ref="fiperModal" class="maximized" :content-css="{padding: '50px'}">
             <q-layout>
@@ -56,50 +53,94 @@
                 </div>
             </q-layout>
         </q-modal>
+        <div class="layout-view">
+            <div v-for="(fiper_value,fiper_key) in fiper_data"  class="fiper-wrapper" :id="'fiper-' + fiper_key">
+                <div v-for="(value,key) in fiper_value" class="card flex items-center wrap">
+                    <div class="fiper-logo-wrapper sm-width-1of3">
+                        <img class="fiper-logo" :src="get_fiper_type_img(value)">
+                    </div>
+                    <div class="fiper-data fiper-data self-stretch sm-witdh-2of3">
+                        <div class="card-title wrap">{{ value.fiper_name }}</div>
+                        <div class="card-content wrap">
+                            <div>{{ value.fiper_des }}</div>
+                            <div>{{ value.fiper_amount }} USD</div>
+                            <div>{{ value.fiper_type_name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="primary green circular fixed-bottom-right btn-primary big " @click="$refs.fiperModal.open()">
+            <i>add</i>
+        </button>
         <!-- Router view here -->
-        <router-view></router-view>
         <!-- <button class="primary green" @click="add">Click to log</button> -->
     </q-layout>
 </template>
 <script type="text/javascript">
 import Database from 'settings/database'
+import {
+    STATIC_URL
+} from 'settings/settings'
 import Router from 'root_dir/router'
 import AddFinance from 'components/finance-performance/AddNew'
 export default {
     data: function() {
         return {
-            fiper_data: {
+            tempo_fiper_data: {
                 data: '',
                 instance: ''
+            },
+            fiper_data: {
+
             }
         }
     },
     mounted: function() {
-        // this.$set('text', this.$parent.global_text)
+        console.log('STATIC_URL is ' + STATIC_URL)
+            // this.$set('text', this.$parent.global_text)
         var that = this
+        that.fetch_fiper_data()
     },
     methods: {
+        get_fiper_type_img: function(fiper) {
+            return STATIC_URL + '/category/' + fiper.fiper_root_type + '_' + fiper.fiper_type + '.png'
+        },
+        fetch_fiper_data: function() {
+            var that = this
+            Database.get("fiper").then(function(fiper) {
+                console.log(fiper.data)
+                that.$set(that, 'fiper_data', fiper.data)
+                    // console.log(doc)
+            }).catch(function(err) {
+                console.log(err)
+                if (err.name === 'not_found') {
+                    console.log("not found, must be initialized")
+                } else { // hm, some other error
+                    throw err
+                }
+            })
+        },
         setFiperData: function(data) {
             var that = this
                 // console.log(data)
             try {
-                that.$set(that.fiper_data, 'data', data.data)
-                that.$set(that.fiper_data, 'instance', data.instance)
+                that.$set(that.tempo_fiper_data, 'data', data.data)
+                that.$set(that.tempo_fiper_data, 'instance', data.instance)
             } catch (err) {
                 console.log(err)
             }
         },
         submitFiperData: function(data) {
             var that = this
-            console.log(that.fiper_data.data)
             try {
-                that.fiper_data.instance.$emit('reset_fiper_data')
-                that.addNewFiper()
+                that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
+                that.addNewFiper() // Add new one
             } catch (err) {
                 console.log(err)
             }
             that.closeFiperModal()
-            console.log(that.fiper_data.data)
+            console.log(that.tempo_fiper_data.data)
 
         },
         closeFiperModal: function() {
@@ -109,25 +150,31 @@ export default {
         addNewFiper: function() {
             var that = this
                 // Setup fiper for the first time
-            var data = that.fiper_data.data
-            Database.get("fiper").then(function(fiper) {
-                fiper.data.push(data)
-                return Database.put(fiper).then(function(new_fiper) {
-                        console.log('update ' + new_fiper.id + ' success fully')
-                        console.log(new_fiper)
-                    }).catch(function(err) {
-                        console.log(err)
-                    })
-                    // console.log(doc)
-            }).catch(function(err) {
-                console.log(err)
-                if (err.name === 'not_found') {
-                    console.log("not found, must be initialized")
-                } else { // hm, some other error
-                    throw err
-                }
+            var data = that.tempo_fiper_data.data
+            if (data != null && typeof data == typeof {}) {
+                Database.get("fiper").then(function(fiper) {
+                    console.log(data)
+                    fiper.data[data.fiper_root_type].push(data)
+                    return Database.put(fiper).then(function(new_fiper) {
+                            console.log('update ' + new_fiper.id + ' successfully')
+                            console.log(new_fiper)
 
-            })
+                            that.fetch_fiper_data() // Fetching again
+
+                        }).catch(function(err) {
+                            console.log(err)
+                        })
+                        // console.log(doc)
+                }).catch(function(err) {
+                    console.log(err)
+                    if (err.name === 'not_found') {
+                        console.log("not found, must be initialized")
+                    } else { // hm, some other error
+                        throw err
+                    }
+
+                })
+            }
         },
     },
     components: {

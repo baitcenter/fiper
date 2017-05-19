@@ -9,7 +9,7 @@
                     <img v-if="form.fiper_type != '---'" v-bind:src="'statics/category/' + form.fiper_root_type + '_' + form.fiper_type + '.png'" alt="">
                 </div>
                 <div class="item-content" @click="openCategorySelect()">
-                    <q-select class="full-width green" disable type="radio" v-model="form.fiper_type" :options="fiper_type"></q-select>
+                    <q-select class="full-width green fiper-select-type" disable type="radio" v-model="form.fiper_type" :options="fiper_type"></q-select>
                 </div>
             </div>
             <div class="item two-lines">
@@ -133,7 +133,7 @@ export default {
                 console.log('search done')
             }
         },
-   
+
         resetFiperData: function() {
             var that = this
             var data = {
@@ -142,10 +142,17 @@ export default {
                 fiper_name: "",
                 fiper_des: "",
                 fiper_amount: 0,
-                fiper_root_type: ''
+                fiper_root_type: '',
+                fiper_type_name: ''
             }
             that.$set(that, 'form', data)
-            // console.log(that.form)
+                // console.log(that.form)
+        },
+        get_category_from_value: function(value){
+        	var that = this
+        	return that.fiper_type.filter(function(elem){
+        		return elem.value == value
+        	})
         }
     },
     watch: {
@@ -170,6 +177,9 @@ export default {
         'form': {
             handler: function(newVal, oldVal) {
                 var that = this
+                var fiper_type_name = that.get_category_from_value(that.form.fiper_type)[0].label
+                console.log(fiper_type_name)
+                newVal.fiper_type_name = fiper_type_name
                 that.$emit('set_fiper_data', {
                     data: newVal,
                     instance: this
@@ -186,7 +196,8 @@ export default {
                 fiper_name: "",
                 fiper_des: "",
                 fiper_amount: 0,
-                fiper_root_type: ''
+                fiper_root_type: '',
+                fiper_type_name: ''
             },
             fiper_type: [{
                 label: 'Select now',
@@ -208,11 +219,11 @@ export default {
         var that = this
         console.log(that)
         that.$on('reset_fiper_data', function() {
-            console.log('triggered reset_fiper_data')
-            that.restoreSearchData()
-            that.resetFiperData()
-        })
-
+                console.log('triggered reset_fiper_data')
+                that.restoreSearchData()
+                that.resetFiperData()
+            })
+            // Fetch category
         Database.get('fiper_category').then(function(res) {
                 // console.log(res)
                 var data = Object.assign({}, res)
