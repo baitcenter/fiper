@@ -55,16 +55,37 @@
         </q-modal>
         <div class="layout-view">
             <div v-for="(fiper_value,fiper_key) in fiper_data" class="fiper-wrapper" :id="'fiper-' + fiper_key">
-                <div v-for="(value,key) in fiper_value" class="card flex items-center wrap">
-                    <div class="fiper-logo-wrapper sm-width-1of3">
-                        <img class="fiper-logo" :src="get_fiper_type_img(value)">
+                <!-- {{ fiper_root_type[fiper_key].text }} -->
+                <div v-for="(value,key) in fiper_value" class="card flex items-center wrap justify-start">
+                    <div class="row full-width auto">
+                        <div class="tag label bg-green text-white float-left">{{ value.fiper_type_name }}</div>
                     </div>
-                    <div class="fiper-data fiper-data self-stretch sm-witdh-2of3">
-                        <div class="card-title wrap">{{ value.fiper_name }}</div>
-                        <div class="card-content wrap">
-                            <div>{{ value.fiper_des }}</div>
-                            <div>{{ value.fiper_amount }} USD</div>
-                            <div>{{ value.fiper_type_name }}</div>
+                    <div class="card-title row wrap auto items-center">
+                        <h2>{{ value.fiper_amount }} USD</h2>
+                    </div>
+                    <div class="row auto sm-width-1of3 justify-end">
+                        <div class="fiper-action float-right row">
+                            <div class="fiper-logo-wrapper">
+                                <img class="fiper-logo" :src="get_fiper_type_img(value)">
+                            </div>
+                            <button class="green circular small outline"><i class="material-icons">edit</i></button>
+                            <button class="green circular small"><i class="material-icons">delete</i></button>
+                        </div>
+                    </div>
+                    <div class="full-width auto">
+                        <div class="row full-width auto wrap">
+                            <div class="row fiper-data self-stretch full-width auto">
+                                <div class="card-content wrap auto">
+                                    <h5> {{ value.fiper_name }}</h5>
+                                    <div>{{ value.fiper_des }}</div>
+                                </div>
+                            </div>
+                            <div class="row full-width auto items-center fiper-extra-info">
+                                <div class="float-left auto">{{ get_fiper_date(value) }}</div>
+                                <div class="fiper-root-type chip label bg-grey-4 float-right">
+                                    {{ fiper_root_type[fiper_key].text }}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,6 +108,17 @@ import AddFinance from 'components/finance-performance/AddNew'
 export default {
     data: function() {
         return {
+            fiper_root_type: {
+                outcome: {
+                    text: 'Outcome',
+                },
+                income: {
+                    text: 'Income',
+                },
+                debts_and_loans: {
+                    text: 'Debs and Loans',
+                },
+            },
             tempo_fiper_data: {
                 data: '',
                 instance: ''
@@ -103,6 +135,14 @@ export default {
         that.fetch_fiper_data()
     },
     methods: {
+        get_fiper_date: function(fiper) {
+            // console.log(fiper)
+            var date = new Date(fiper.fiper_date)
+            return date.toDateString()
+        },
+        remove_fiper: function(fiper) {
+
+        },
         get_fiper_type_img: function(fiper) {
             return STATIC_URL + '/category/' + fiper.fiper_root_type + '_' + fiper.fiper_type + '.png'
         },

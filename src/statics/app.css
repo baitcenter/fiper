@@ -1,23 +1,57 @@
 /* Created by khangtd */
-.add-fiper > div.layout-header{
+
+.fiper-logo-wrapper > .fiper-logo {
+    width: 45px;
+    height: 45px;
+}
+
+.fiper-root-type {
+    float: right;
+    margin-bottom: 10px
+}
+
+.fiper-extra-info div {
+    /*padding: 0 20px!important;*/
+    margin: 5px 15px;
+}
+
+.card {
+    margin-top: 20px;
+    word-wrap: break-word;
+}
+
+.fiper-action {
+    margin-right: 10px;
+}
+
+.fiper-action button {
+    margin: 5px;
+}
+
+.add-fiper > div.layout-header {
     background: #4caf50;
 }
-.result-not-found{
+
+.result-not-found {
     color: rgba(51, 51, 51, 0.6);
     text-align: center;
     font-size: 25px
 }
-div.category-logo > img{
+
+div.category-logo > img {
     width: auto;
     height: 40px;
 }
-div.category-wrapper div.category{
+
+div.category-wrapper div.category {
     padding: 10px;
     cursor: pointer;
 }
-div.category-wrapper div.category > img{
-   width: auto;
+
+div.category-wrapper div.category > img {
+    width: auto;
 }
+
 .add-new-fiper .layout-header {
     background: #4caf50!important;
 }
