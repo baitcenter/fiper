@@ -1,6 +1,6 @@
 /* Created by khangtd */
-.fiper-wrapper > div.card{
-
+.add-fiper > div.layout-header{
+    background: #4caf50;
 }
 .result-not-found{
     color: rgba(51, 51, 51, 0.6);
@@ -12,7 +12,7 @@ div.category-logo > img{
     height: 40px;
 }
 div.category-wrapper div.category{
-    margin: 10px;
+    padding: 10px;
     cursor: pointer;
 }
 div.category-wrapper div.category > img{

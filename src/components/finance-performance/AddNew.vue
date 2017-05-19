@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div class="add-new-fiper-wrapper">
         <!-- <h1>Your performance</h1> -->
         <!-- Single Selection using Radios -->
-        <div class="add-new-fiper-wrapper full-width flex justify-center">
+        <div class=" full-width flex justify-center">
             <div class="add-new-fiper form-wrapper sm-width-5of5 width-3of5">
                 <div class="item two-lines">
                     <i v-if="form.fiper_type == '---'" class="material-icons item-primary">highlight</i>
@@ -42,7 +42,7 @@
         </div>
         <!-- Modal to select category -->
         <q-modal ref="categorySelect" class="maximized">
-            <q-layout class="green">
+            <q-layout class="green  add-fiper">
                 <div slot="header" class="toolbar green">
                     <button @click="closeCategorySelect()">
                         <i>keyboard_arrow_left</i>
@@ -52,7 +52,7 @@
                     </q-toolbar-title>
                     <q-search class="primary green" v-model="category_search.keyword" :debounce="200"></q-search>
                 </div>
-                <q-tabs slot="navigation" default-tab="income" @change="toggleTabs" class="flex primary green justify-center">
+                <q-tabs slot="navigation" ref="tabs" @change="toggleTabs" class="flex primary green justify-center">
                     <q-tab name="debts_and_loans" replace>Debts & Loans</q-tab>
                     <q-tab name="income" replace>Income</q-tab>
                     <q-tab name="outcome" exact replace>Outcome</q-tab>
@@ -60,8 +60,8 @@
                 <div class="layout-view">
                     <div class="layout-padding">
                         <div class="category-wrapper flex" v-for="(value,key) in fiper_group_render" v-bind:ref="key">
-                            <div :id="key" style="display: none" class="row wrap justify-center content-center">
-                                <div v-for="(category,index) in value" class="category grow-1 text-center" @click="selectCategory(key,category.value)">
+                            <div :id="key" style="display: none" class="row wrap justify-start full-width">
+                                <div v-for="(category,index) in value" class="category sm-width-1of2 text-center" @click="selectCategory(key,category.value)">
                                     <img v-bind:src="'statics/category/' + key + '_' + category.value + '.png'" alt="">
                                     <div> {{ category.label }} </div>
                                 </div>
@@ -86,19 +86,16 @@ export default {
             var origin_data = Object.assign({}, that.fiper_group)
             that.$set(that, 'fiper_group_render', origin_data)
             that.$set(that.category_search, 'result_not_found', false)
-
         },
         toggleTabs: function(tab) {
             console.log(tab)
             var that = this
             that.$set(that, 'current_tab', tab)
-                // this.$refs[tab].close()
         },
         openCategorySelect: function() {
             var that = this
             that.$refs.categorySelect.open()
-
-            $('#income').show()
+            that.toggleTabs('income')
         },
         closeCategorySelect: function() {
             var that = this
@@ -124,13 +121,15 @@ export default {
                     }).slice()
                     that.$set(that.fiper_group_render, key, new_data)
                 }
-                // Set status
+                console.log(that.current_tab)
+                 // Set status
                 if (that.fiper_group_render[that.current_tab].length < 1) {
                     that.$set(that.category_search, 'result_not_found', true)
                 } else {
                     that.$set(that.category_search, 'result_not_found', false)
-                    that.restoreSearchData()
+                        // that.restoreSearchData()
                 }
+                console.log(that.fiper_group_render[that.current_tab].length)
                 console.log('search done')
             }
         },
@@ -147,8 +146,7 @@ export default {
                 fiper_type_name: ''
             }
             that.$set(that, 'form', data)
-            that.$refs.tab.setActiveTab('income')
-            // console.log(that.form)
+                // console.log(that.form)
         },
         get_category_from_value: function(value) {
             var that = this
@@ -161,10 +159,12 @@ export default {
         'current_tab': {
             handler: function(newVal, oldVal) {
                 var that = this
+                console.log('triggered current_tab watcher')
                 $('#income').hide()
                 $('#outcome').hide()
                 $('#debts_and_loans').hide()
                 $('#' + newVal).show()
+                that.$refs.tabs.setActiveTab(newVal)
                 that.searchCategory()
             }
         },
