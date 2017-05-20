@@ -1,4 +1,16 @@
 /* Created by khangtd */
+.card-title{
+    overflow: auto
+}
+.fixed-bottom-right {
+    -webkit-transition: all 0.7s ease-out;
+    /* Safari */
+    transition: all 0.7s ease-out;
+}
+
+#add-fiper.bottom-scrolled {
+    bottom: 200px;
+}
 
 .fiper-logo-wrapper > .button.small.fiper-logo {
     width: 50px;
@@ -45,7 +57,7 @@ div.category-logo > img {
 }
 
 div.category-wrapper div.category {
-    padding: 10px;
+    /*padding: 10px;*/
     cursor: pointer;
 }
 

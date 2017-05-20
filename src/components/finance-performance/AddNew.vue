@@ -81,6 +81,7 @@ import $ from "jquery";
 
 export default {
     methods: {
+
         restoreSearchData: function() {
             var that = this
             var origin_data = Object.assign({}, that.fiper_group)

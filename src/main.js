@@ -24,6 +24,7 @@ Vue.use(Vuelidate)
 // Vue.use(VueMaterial);
 Quasar.start(() => {
     /* eslint-disable no-new */
+
     new Vue({
         el: '#q-app',
         router,

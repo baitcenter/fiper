@@ -9,6 +9,9 @@
                 <!-- <i class="material-icons">account_balance</i> -->
                 Finance Performance
             </q-toolbar-title>
+            <button class="green big" @click="$refs.fiperModal.open()">
+                <i>note_add</i>
+            </button>
         </div>
         <!-- Left-side Drawer -->
         <q-drawer ref="leftDrawer">
@@ -59,10 +62,10 @@
                     <div class="row full-width auto">
                         <div class="tag label bg-green text-white float-left">{{ value.fiper_type_name }}</div>
                     </div>
-                    <div class="card-title row wrap auto items-center">
-                        <h2>{{ value.fiper_amount }} USD</h2>
-                    </div>
-                    <div class="row auto sm-width-1of3 justify-end">
+                    <div class="row auto full-width items-center justify-end">
+                        <div class="card-title auto row">
+                            <h3>{{ value.fiper_amount }} USD</h3>
+                        </div>
                         <div class="fiper-action float-right row">
                             <div class="circular small fiper-logo-wrapper">
                                 <img class="button fiper-logo small" :src="get_fiper_type_img(value,index,fiper_key)">
@@ -89,10 +92,13 @@
                     </div>
                 </div>
             </div>
+            <div id="scroll" v-scroll="detectScroll"></div>
         </div>
-        <button class="primary green circular fixed-bottom-right btn-primary big " @click="$refs.fiperModal.open()">
-            <i>add</i>
+        <!-- <draggable @start="drag=true" @end="drag=false"> -->
+        <button :move="checkMove" id="add-fiper" class="primary green circular fixed-bottom-right btn-primary big" @click="$refs.fiperModal.open()">
+            <i>note_add</i>
         </button>
+        <!-- </draggable> -->
         <!-- Router view here -->
         <!-- <button class="primary green" @click="add">Click to log</button> -->
     </q-layout>
@@ -104,6 +110,11 @@ import {
 } from 'settings/settings'
 import Router from 'root_dir/router'
 import AddFinance from 'components/finance-performance/AddNew'
+import $ from "jquery"
+// import draggable from 'vuedraggable'
+
+// TODO: use drag and drop
+
 export default {
     data: function() {
         return {
@@ -128,12 +139,32 @@ export default {
         }
     },
     mounted: function() {
+        // Setup jquery API
         console.log('STATIC_URL is ' + STATIC_URL)
             // this.$set('text', this.$parent.global_text)
         var that = this
         that.fetch_fiper_data()
     },
     methods: {
+        detectScroll: function(elem) {
+            // var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            // var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            // console.log(width)
+            var screen_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            var flag_height = $('#scroll').offset().top
+            var add_fiper_btn = $('#add-fiper')
+            console.log(flag_height)
+            console.log(screen_height)
+            console.log(Math.abs(flag_height - screen_height))
+
+            if (Math.abs(flag_height - screen_height) < 10) {
+                console.log('triggred when scroll')
+                $('#add-fiper').addClass('hidden')
+            } else {
+                $('#add-fiper').removeClass('hidden')
+            }
+            // console.log(elem)
+        },
         get_fiper_date: function(fiper) {
             // console.log(fiper)
             var date = new Date(fiper.fiper_date)
@@ -142,7 +173,7 @@ export default {
         removeFiper: function(fiper, index, fiper_key) {
             var that = this
             console.log(index)
-            var new_data = that.fiper_data[fiper_key].splice(index,1)
+            var new_data = that.fiper_data[fiper_key].splice(index, 1)
             console.log(new_data)
             that.$set(that.fiper_data, fiper_key, that.fiper_data[fiper_key])
             console.log()
@@ -204,17 +235,21 @@ export default {
                 console.log(err)
             }
             that.closeFiperModal()
+            $('#add-fiper').removeClass('hidden')
+
             console.log(that.tempo_fiper_data.data)
 
         },
         closeFiperModal: function() {
             var that = this
+
             try {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
             } catch (err) {
                 console.log(err)
             }
             that.$refs.fiperModal.close()
+
 
         },
         addNewFiper: function() {
@@ -248,7 +283,8 @@ export default {
         },
     },
     components: {
-        AddFinance
+        AddFinance,
+        // draggable
     }
 }
 </script>
