@@ -28,8 +28,9 @@
                         <span class="error-message" v-if="$v.form.new_pin_code.$error"> PIN CODE is required and must have minimum of {{ $v.form.new_pin_code.$params.minLength.min }} characters length. </span>
                     </div>
                     <div class="row justify-center wrap">
-                        <button class="primary outline" @click="submit()">Submit</button>
-                        <button class="secondary" @click="reset()">RESET</button>
+                        <button class="green outline" @click="submit()">Submit</button>
+                        <!-- <button class="green" @click="reset()">RESET</button> -->
+                        <router-link tag="button" class="green" :to="'/'">Go Home</router-link>
                     </div>
                 </div>
             </div>

@@ -26,8 +26,8 @@
                         <span class="error-message" v-if="$v.pin_code.$error"> PIN CODE is required and must have minimum of {{ $v.pin_code.$params.minLength.min }} characters length. </span>
                     </div>
                     <div class="row justify-center wrap">
-                        <button id="auth-login" class="primary outline" @click="login()">Login</button>
-                        <button class="secondary" @click="register()">Change PIN CODE</button>
+                        <button id="auth-login" class="green outline" @click="login()">Login</button>
+                        <button class="green" @click="register()">Change PIN CODE</button>
                     </div>
                 </div>
             </div>
