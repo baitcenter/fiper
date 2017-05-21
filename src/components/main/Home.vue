@@ -258,11 +258,13 @@ export default {
             var that = this
             try {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
+                var data = Object.assign({}, that.tempo_fiper_data)
 
-                if (that.tempo_fiper_data.fiper_index != null) {
-                    that.updateFiper(that.tempo_fiper_data.fiper_index)
+
+                if (data.fiper_index != null) {
+                    that.updateFiper(data.fiper_index,data.data)
                 } else {
-                    that.addNewFiper()
+                    that.addNewFiper(data.data)
                 }
 
                 that.resetTempoFiperData() // reset tempo fiper data
@@ -284,9 +286,9 @@ export default {
             }
             that.$refs.fiperModal.close()
         },
-        updateFiper: function(index) {
+        updateFiper: function(index,data) {
             var that = this
-            var data = that.tempo_fiper_data.data
+            // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
                     console.log(data)
@@ -313,10 +315,10 @@ export default {
                 })
             }
         },
-        addNewFiper: function() {
+        addNewFiper: function(data) {
             var that = this
                 // Setup fiper for the first time
-            var data = that.tempo_fiper_data.data
+            // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
                     console.log(fiper.data)
