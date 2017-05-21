@@ -2,6 +2,7 @@
     <div class="add-new-fiper-wrapper">
         <!-- <h1>Your performance</h1> -->
         <!-- Single Selection using Radios -->
+        {{ $route.params.id }}
         <div class=" full-width flex justify-center">
             <div class="add-new-fiper form-wrapper sm-width-5of5 width-3of5">
                 <div class="item two-lines">
@@ -81,7 +82,9 @@ import $ from "jquery";
 
 export default {
     methods: {
+        fetch_fiper_data: function() {
 
+        },
         restoreSearchData: function() {
             var that = this
             var origin_data = Object.assign({}, that.fiper_group)
@@ -123,7 +126,7 @@ export default {
                     that.$set(that.fiper_group_render, key, new_data)
                 }
                 console.log(that.current_tab)
-                 // Set status
+                    // Set status
                 if (that.fiper_group_render[that.current_tab].length < 1) {
                     that.$set(that.category_search, 'result_not_found', true)
                 } else {
@@ -183,10 +186,7 @@ export default {
                 var fiper_type_name = that.get_category_from_value(that.form.fiper_type)[0].label
                 console.log(fiper_type_name)
                 newVal.fiper_type_name = fiper_type_name
-                that.$emit('set_fiper_data', {
-                    data: newVal,
-                    instance: that
-                })
+                that.$emit('set_tempo_fiper_data', newVal)
             },
             deep: true
         }
@@ -220,7 +220,20 @@ export default {
     mounted: function() {
 
         var that = this
+
         console.log(that)
+        that.$emit('starting-stage', that)
+        that.$emit('set_tempo_fiper_data', that.form)
+        that.$on('fetch_single_fiper_data', function(data) {
+            Database.get('fiper').then(function(fiper) {
+                var fiper_data = fiper.data[data.fiper_root_type][data.index]
+                that.$set(that, 'form', fiper_data)
+                console.log('fetching fiper data successfully')
+            }).catch(function(err) {
+                console.log(err)
+            })
+        })
+
         that.$on('reset_fiper_data', function() {
                 console.log('triggered reset_fiper_data')
                 that.restoreSearchData()

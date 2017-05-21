@@ -24,6 +24,7 @@ var router = new VueRouter({
             { path: '/', component: load('Index') }, // Default
             { path: '/login', component: load('auth/Auth') },
             { path: '/home', component: load('main/Home') },
+            { path: '/fiper/:id', component: load('finance-performance/Fiper') },
             { path: '/pinreset', component: load('auth/PinChange'), },
             { path: '/settings', component: load('main/Settings'), },
             { path: '/about', component: load('main/About'), },

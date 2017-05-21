@@ -49,7 +49,7 @@
                 </div>
                 <div class="layout-view">
                     <div class="layout-padding">
-                        <add-finance v-on:set_fiper_data="setFiperData" v-on:submit_fiper_data="setFiperData"></add-finance>
+                        <fiper v-on:set_tempo_fiper_data="setTempoFiperData" v-on:starting-stage="startingFiper"></fiper>
                         <button class="primary outline green" @click="submitFiperData">Set</button>
                         <button class="secondary green" @click="closeFiperModal">Cancel</button>
                     </div>
@@ -70,8 +70,8 @@
                             <div class="circular small fiper-logo-wrapper">
                                 <img class="button fiper-logo small" :src="get_fiper_type_img(value,index,fiper_key)">
                             </div>
-                            <button class="green circular small outline"><i class="material-icons">edit</i></button>
-                            <button class="green circular small" @click="removeFiper(value,index,fiper_key)"><i class="material-icons">delete</i></button>
+                            <button class="green circular small outline" @click="openEditFiper(index,fiper_key)"><i class="material-icons">edit</i></button>
+                            <button class="green circular small" @click="removeFiper(index,fiper_key)"><i class="material-icons">delete</i></button>
                         </div>
                     </div>
                     <div class="full-width auto">
@@ -95,7 +95,7 @@
             <div id="scroll" v-scroll="detectScroll"></div>
         </div>
         <!-- <draggable @start="drag=true" @end="drag=false"> -->
-        <button :move="checkMove" id="add-fiper" class="primary green circular fixed-bottom-right btn-primary big" @click="$refs.fiperModal.open()">
+        <button id="add-fiper" class="primary green circular fixed-bottom-right btn-primary big" @click="$refs.fiperModal.open()">
             <i>note_add</i>
         </button>
         <!-- </draggable> -->
@@ -109,7 +109,7 @@ import {
     STATIC_URL
 } from 'settings/settings'
 import Router from 'root_dir/router'
-import AddFinance from 'components/finance-performance/AddNew'
+import Fiper from 'components/finance-performance/Fiper'
 import $ from "jquery"
 // import draggable from 'vuedraggable'
 
@@ -131,7 +131,9 @@ export default {
             },
             tempo_fiper_data: {
                 data: '',
-                instance: ''
+                instance: '',
+                fiper_index: '',
+                fiper_key: ''
             },
             fiper_data: {
 
@@ -146,6 +148,23 @@ export default {
         that.fetch_fiper_data()
     },
     methods: {
+        startingFiper: function(instance) {
+            var that = this
+                // This methods is to receive fiper instance, comfortable to communicate
+            that.$set(that.tempo_fiper_data, 'instance', instance)
+            console.log('binding instance successfully')
+        },
+        openEditFiper: function(index, fiper_key) {
+            var that = this
+            var data = {
+                fiper_root_type: fiper_key,
+                index: index
+            }
+            that.$set(that.tempo_fiper_data, 'fiper_index', index) // Set tempo data
+            that.$set(that.tempo_fiper_data, 'fiper_key', fiper_key) // Set tempo data
+            that.tempo_fiper_data.instance.$emit('fetch_single_fiper_data', data)
+            that.$refs.fiperModal.open()
+        },
         detectScroll: function(elem) {
             // var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
             // var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -153,15 +172,14 @@ export default {
             var screen_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
             var flag_height = $('#scroll').offset().top
             var add_fiper_btn = $('#add-fiper')
-            console.log(flag_height)
-            console.log(screen_height)
-            console.log(Math.abs(flag_height - screen_height))
-
+                // console.log(flag_height)
+                // console.log(screen_height)
             if (Math.abs(flag_height - screen_height) < 10) {
+                console.log(Math.abs(flag_height - screen_height))
                 console.log('triggred when scroll')
-                $('#add-fiper').addClass('hidden')
+                $('#add-fiper').addClass('bottom-scrolled')
             } else {
-                $('#add-fiper').removeClass('hidden')
+                $('#add-fiper').removeClass('bottom-scrolled')
             }
             // console.log(elem)
         },
@@ -170,7 +188,7 @@ export default {
             var date = new Date(fiper.fiper_date)
             return date.toDateString()
         },
-        removeFiper: function(fiper, index, fiper_key) {
+        removeFiper: function(index, fiper_key) {
             var that = this
             console.log(index)
             var new_data = that.fiper_data[fiper_key].splice(index, 1)
@@ -186,7 +204,7 @@ export default {
 
                 // console.log(doc)
                 return Database.put(doc_fiper).then(function(res) {
-                    console.log('Delete ' + fiper.fiper_name + ' successfully')
+                    console.log('Delete fiper with id (' + fiper_key + ', ' + index + ') successfully')
                     that.fetch_fiper_data()
                 })
             }).catch(function(err) {
@@ -216,29 +234,44 @@ export default {
                 }
             })
         },
-        setFiperData: function(data) {
+        setTempoFiperData: function(data) {
             var that = this
                 // console.log(data)
             try {
-                that.$set(that.tempo_fiper_data, 'data', data.data)
-                that.$set(that.tempo_fiper_data, 'instance', data.instance)
+                that.$set(that.tempo_fiper_data, 'data', data)
             } catch (err) {
                 console.log(err)
             }
         },
-        submitFiperData: function(data) {
+        resetTempoFiperData: function() {
+            var new_data = {
+                data: null,
+                instance: that.tempo_fiper_data.instance,
+                index: null,
+                fiper_key: null
+            }
+            var that = this
+            that.$set(that, 'tempo_fiper_data', new_data)
+        },
+        submitFiperData: function() {
             var that = this
             try {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
-                that.addNewFiper() // Add new one
+                
+                if(that.tempo_fiper_data.fiper_index != null) {
+                    that.updateFiper(that.tempo_fiper_data.fiper_index)
+                }
+                else{
+                    that.addNewFiper()
+                }
+
+                that.resetTempoFiperData() // reset tempo fiper data
             } catch (err) {
                 console.log(err)
             }
             that.closeFiperModal()
-            $('#add-fiper').removeClass('hidden')
-
+            $('#add-fiper').removeClass('bottom-scrolled')
             console.log(that.tempo_fiper_data.data)
-
         },
         closeFiperModal: function() {
             var that = this
@@ -249,8 +282,35 @@ export default {
                 console.log(err)
             }
             that.$refs.fiperModal.close()
+        },
+        updateFiper: function(index) {
+            var that = this
+            var data = that.tempo_fiper_data.data
+            if (data != null && typeof data == typeof {}) {
+                Database.get("fiper").then(function(fiper) {
+                    console.log(data)
+                    fiper.data[data.fiper_root_type][index] = data
+                    return Database.put(fiper).then(function(updated_fiper) {
 
+                            console.log('update ' + updated_fiper.id + ' successfully')
+                            console.log(updated_fiper)
 
+                            that.fetch_fiper_data() // Fetching again
+
+                        }).catch(function(err) {
+                            console.log(err)
+                        })
+                        // console.log(doc)
+                }).catch(function(err) {
+                    console.log(err)
+                    if (err.name === 'not_found') {
+                        console.log("not found, must be initialized")
+                    } else { // hm, some other error
+                        throw err
+                    }
+
+                })
+            }
         },
         addNewFiper: function() {
             var that = this
@@ -258,9 +318,10 @@ export default {
             var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
-                    console.log(data)
+                    console.log(fiper.data)
                     fiper.data[data.fiper_root_type].push(data)
                     return Database.put(fiper).then(function(new_fiper) {
+
                             console.log('update ' + new_fiper.id + ' successfully')
                             console.log(new_fiper)
 
@@ -283,8 +344,7 @@ export default {
         },
     },
     components: {
-        AddFinance,
-        // draggable
+        Fiper,
     }
 }
 </script>

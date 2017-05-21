@@ -1,15 +1,21 @@
 /* Created by khangtd */
-.card-title{
+
+.card-title {
     overflow: auto
 }
-.fixed-bottom-right {
+
+
+#add-fiper {
+    visibility: visible;
+    opacity: 1;
     -webkit-transition: all 0.7s ease-out;
     /* Safari */
     transition: all 0.7s ease-out;
 }
 
 #add-fiper.bottom-scrolled {
-    bottom: 200px;
+    visibility: hidden;
+    opacity: 0;
 }
 
 .fiper-logo-wrapper > .button.small.fiper-logo {
