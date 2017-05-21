@@ -10,7 +10,7 @@
                 Finance Performance
                 <div><span style="font-size: 13px">today</span></div>
             </q-toolbar-title>
-            <button class="green big" @click="$refs.fiperModal.open()">
+            <button v-if="fiper_component != null" class="green big" @click="fiper_component.$refs.fiperModal.open()">
                 <i>note_add</i>
             </button>
         </div>
@@ -53,29 +53,37 @@ import {
 
 import Router from '../router'
 import Database from 'settings/database'
-
+import Bus from 'settings/event-bus'
 export default {
-    data() {
-            return {
-                id: Utils.uid(),
-            }
-        },
-        computed: {
-
-        },
-        methods: {
-
-        },
-        mounted() {
-
-            Router.push('/home')
-        },
-        beforeDestroy() {
-
-        },
-        components: {
-
+    data: function() {
+        return {
+            fiper_component: null
         }
+    },
+    computed: {
+
+    },
+    methods: {
+
+    },
+    mounted: function() {
+        var that = this
+        Router.push('/home')
+        Bus.$on('receive_fiper_component', function(component) {
+            that.$set(that, 'fiper_component', component)
+        })
+        Bus.$on('destroy_fiper_component', function() {
+            that.$set(that, 'fiper_component', null)
+        })
+    },
+    beforeDestroy() {
+        Bus.$off('receive_fiper_component')
+        Bus.$off('destroy_fiper_component')
+
+    },
+    components: {
+
+    }
 
 }
 </script>

@@ -81,6 +81,7 @@ import Database from 'settings/database'
 import $ from "jquery";
 
 export default {
+
     methods: {
         fetch_fiper_data: function() {
 

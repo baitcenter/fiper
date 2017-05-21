@@ -80,9 +80,11 @@ import {
     Toast
 } from 'quasar'
 import Success from 'components/alert/Success'
+import Bus from 'settings/event-bus'
 // import draggable from 'vuedraggable'
 
 // TODO: use drag and drop
+// TODO: use Bus instead
 
 export default {
     data: function() {
@@ -109,10 +111,15 @@ export default {
             }
         }
     },
+    beforeDestroy: function() {
+        Bus.$emit('destroy_fiper_component')
+    },
     mounted: function() {
         // Setup jquery API
+        var that = this
         console.log('STATIC_URL is ' + STATIC_URL)
             // this.$set('text', this.$parent.global_text)
+        Bus.$emit('receive_fiper_component', that)
         var that = this
         that.fetch_fiper_data()
     },
