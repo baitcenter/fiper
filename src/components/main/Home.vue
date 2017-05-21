@@ -44,7 +44,7 @@
                         <i>keyboard_arrow_left</i>
                     </button>
                     <q-toolbar-title :padding="1">
-                        Create new Fiper
+                        {{ tempo_fiper_data.fiper_index != null ? 'Update "' + tempo_fiper_data.data.fiper_name + '"' : 'Create new Fiper' }}
                     </q-toolbar-title>
                 </div>
                 <div class="layout-view">
@@ -130,10 +130,10 @@ export default {
                 },
             },
             tempo_fiper_data: {
-                data: '',
-                instance: '',
-                fiper_index: '',
-                fiper_key: ''
+                data: null,
+                instance: null,
+                fiper_index: null,
+                fiper_key: null
             },
             fiper_data: {
 
@@ -244,24 +244,24 @@ export default {
             }
         },
         resetTempoFiperData: function() {
+            var that = this
+
             var new_data = {
                 data: null,
                 instance: that.tempo_fiper_data.instance,
                 index: null,
                 fiper_key: null
             }
-            var that = this
             that.$set(that, 'tempo_fiper_data', new_data)
         },
         submitFiperData: function() {
             var that = this
             try {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
-                
-                if(that.tempo_fiper_data.fiper_index != null) {
+
+                if (that.tempo_fiper_data.fiper_index != null) {
                     that.updateFiper(that.tempo_fiper_data.fiper_index)
-                }
-                else{
+                } else {
                     that.addNewFiper()
                 }
 
@@ -278,6 +278,7 @@ export default {
 
             try {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
+                that.resetTempoFiperData()
             } catch (err) {
                 console.log(err)
             }
