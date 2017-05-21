@@ -120,7 +120,10 @@ export default {
         console.log('STATIC_URL is ' + STATIC_URL)
             // this.$set('text', this.$parent.global_text)
         Bus.$emit('receive_fiper_component', that)
-        var that = this
+        Bus.$emit('receive_child_info',{
+            page_title: 'Finance Performance',
+            page_subtitle: 'today'
+        })
         that.fetch_fiper_data()
     },
     methods: {

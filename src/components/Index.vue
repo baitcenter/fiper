@@ -7,8 +7,8 @@
             </button>
             <q-toolbar-title :padding="1" class="text-center">
                 <!-- <i class="material-icons">account_balance</i> -->
-                Finance Performance
-                <div><span style="font-size: 13px">today</span></div>
+                {{ child_info.page_title }}
+                <div><span style="font-size: 13px">{{ child_info.page_subtitle.toLowerCase() }}</span></div>
             </q-toolbar-title>
             <button v-if="fiper_component != null" class="green big" @click="fiper_component.$refs.fiperModal.open()">
                 <i>note_add</i>
@@ -57,7 +57,11 @@ import Bus from 'settings/event-bus'
 export default {
     data: function() {
         return {
-            fiper_component: null
+            fiper_component: null,
+            child_info: {
+                page_title: '',
+                page_subtitle: ''
+            }
         }
     },
     computed: {
@@ -69,6 +73,9 @@ export default {
     mounted: function() {
         var that = this
         Router.push('/home')
+        Bus.$on('receive_child_info', function(data) {
+            that.$set(that, 'child_info', data)
+        })
         Bus.$on('receive_fiper_component', function(component) {
             that.$set(that, 'fiper_component', component)
         })
@@ -79,7 +86,7 @@ export default {
     beforeDestroy() {
         Bus.$off('receive_fiper_component')
         Bus.$off('destroy_fiper_component')
-
+        Bus.$off('receive_child_info')
     },
     components: {
 
