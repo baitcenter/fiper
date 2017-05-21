@@ -78,7 +78,7 @@ export default {
                         is_authed: true,
                         CODE: doc.CODE
                     })
-                    Router.push("/home")
+                    Router.push("/")
                 } else {
                     console.log("Wrong pin_code [" + cur_pincode + " != " + that.pin_code + "]")
                     const dialog = Toast.create.info({

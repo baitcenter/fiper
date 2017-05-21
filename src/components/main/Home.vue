@@ -71,7 +71,7 @@
                                 <img class="button fiper-logo small" :src="get_fiper_type_img(value,index,fiper_key)">
                             </div>
                             <button class="green circular small outline" @click="openEditFiper(index,fiper_key)"><i class="material-icons">edit</i></button>
-                            <button class="green circular small" @click="removeFiper(index,fiper_key)"><i class="material-icons">delete</i></button>
+                            <button class="green circular small" @click="removeFiperPrompt(index,fiper_key)"><i class="material-icons">delete</i></button>
                         </div>
                     </div>
                     <div class="full-width auto">
@@ -111,6 +111,11 @@ import {
 import Router from 'root_dir/router'
 import Fiper from 'components/finance-performance/Fiper'
 import $ from "jquery"
+import {
+    Dialog,
+    Toast
+} from 'quasar'
+import Success from 'components/alert/Success'
 // import draggable from 'vuedraggable'
 
 // TODO: use drag and drop
@@ -188,13 +193,32 @@ export default {
             var date = new Date(fiper.fiper_date)
             return date.toDateString()
         },
+        removeFiperPrompt: function(index, fiper_key) {
+            var that = this
+            Dialog.create({
+                title: 'Are you sure?',
+                message: 'We cannot recover the deleted Fiper for you',
+                buttons: [{
+                    label: 'Cancel',
+                    classes: 'green ',
+                    handler() {
+
+                    }
+                }, {
+                    label: 'Yes',
+                    classes: 'green outline',
+                    handler() {
+                        that.removeFiper(index, fiper_key)
+                    }
+                }]
+            })
+        },
         removeFiper: function(index, fiper_key) {
             var that = this
             console.log(index)
             var new_data = that.fiper_data[fiper_key].splice(index, 1)
             console.log(new_data)
             that.$set(that.fiper_data, fiper_key, that.fiper_data[fiper_key])
-            console.log()
             Database.get("fiper").then(function(doc_fiper) {
                 console.log(that.fiper_data)
                     // that.$set(that, 'fiper_data', fiper.data)
@@ -206,6 +230,7 @@ export default {
                 return Database.put(doc_fiper).then(function(res) {
                     console.log('Delete fiper with id (' + fiper_key + ', ' + index + ') successfully')
                     that.fetch_fiper_data()
+                    Toast.create.positive('Delete successfully')
                 })
             }).catch(function(err) {
                 console.log(err)
@@ -262,7 +287,7 @@ export default {
 
 
                 if (data.fiper_index != null) {
-                    that.updateFiper(data.fiper_index,data.data)
+                    that.updateFiper(data.fiper_index, data.data)
                 } else {
                     that.addNewFiper(data.data)
                 }
@@ -286,9 +311,9 @@ export default {
             }
             that.$refs.fiperModal.close()
         },
-        updateFiper: function(index,data) {
+        updateFiper: function(index, data) {
             var that = this
-            // var data = that.tempo_fiper_data.data
+                // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
                     console.log(data)
@@ -318,7 +343,7 @@ export default {
         addNewFiper: function(data) {
             var that = this
                 // Setup fiper for the first time
-            // var data = that.tempo_fiper_data.data
+                // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
                     console.log(fiper.data)
@@ -348,6 +373,7 @@ export default {
     },
     components: {
         Fiper,
+        Success
     }
 }
 </script>

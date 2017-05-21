@@ -21,9 +21,8 @@ var router = new VueRouter({
          * build publicPath back to '' so Cordova builds work again.
          */
         routes: [
-            { path: '/', component: load('Index') }, // Default
+            { path: '/', component: load('main/Home') }, // Default
             { path: '/login', component: load('auth/Auth') },
-            { path: '/home', component: load('main/Home') },
             { path: '/fiper/:id', component: load('finance-performance/Fiper') },
             { path: '/pinreset', component: load('auth/PinChange'), },
             { path: '/settings', component: load('main/Settings'), },
@@ -48,11 +47,11 @@ router.beforeResolve((to, from, next) => {
             next('/setup')
             return false
         } else {
-            // Default redirect
-            if (to.fullPath == '/') {
-                next('/home')
-                return false
-            }
+            // // Default redirect
+            // if (to.fullPath == '/') {
+            //     next('/home')
+            //     return false
+            // }
             // Required /setup to redirect to home, fuck, and this is default
             if (to.fullPath == '/setup') {
                 next('/')
