@@ -120,7 +120,7 @@ export default {
         console.log('STATIC_URL is ' + STATIC_URL)
             // this.$set('text', this.$parent.global_text)
         Bus.$emit('receive_fiper_component', that)
-        Bus.$emit('receive_child_info',{
+        Bus.$emit('receive_child_info', {
             page_title: 'Finance Performance',
             page_subtitle: 'today'
         })
@@ -255,9 +255,14 @@ export default {
         },
         submitFiperData: function() {
             var that = this
+            var data = Object.assign({}, that.tempo_fiper_data)
+            console.log(data.data.fiper_type)
+            if(data.data.fiper_type == '---' || data.data.fiper_type == null){
+                Toast.create.negative("You might want to click on the \"Select now\" to choose your category.")
+                return false
+            }
             try {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
-                var data = Object.assign({}, that.tempo_fiper_data)
 
 
                 if (data.fiper_index != null) {
