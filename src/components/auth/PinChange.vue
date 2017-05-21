@@ -2,35 +2,16 @@
     <div class="fluid-wrapper flex justify-center">
         <div class="auth-form row inline auto items-center justify-center self-center">
             <div class="form-wrapper row auto wrap justify-center">
-                <!-- <div class="row justify-center text-center">
-                    <div class="auth-form-logo sm-width-3of3">
-                        <img src="../../assets/logo.png">
-                    </div>
-                </div> -->
                 <div v-if="!change_success" class="row wrap width-2of5 justify-center text-center">
                     <div class="auth-form-logo sm-width-3of3">
                         <img src="~statics/logo_text.png">
                     </div>
                 </div>
-                <!-- <div id="success" v-if="change_success" class="svg auth-form-content width-2of5 sm-width-4of5 wrap row auto items-center text-center justify-center">
-                    <div class="checkmark-circle">
-                        <div class="background"></div>
-                        <div class="checkmark draw"></div>
-                    </div>
-                    <span class="success-text sm-width-1of1">Success</span>
-                    <div class="row justify-center wrap">
-                        <button class="primary outline" @click="backToMainMenu()">MAIN MENU</button>
-                    </div>
-                </div> -->
                 <success v-if="change_success"></success>
                 <div v-if="!change_success" class="auth-form-content width-2of5 sm-width-4of5 wrap row auto">
                     <div class="greeting-wrapper row full-width rotateInDownLeft animated">
                         <span class="greeting label pointing-down text-white">explore your FIPER</span>
                     </div>
-                    <!--  <div class="floating-label large-gutter">
-                        <input required class="full-width" v-model="username">
-                        <label>Username</label>
-                    </div> -->
                     <div class="floating-label large-gutter">
                         <input type="password" required class="full-width validate" v-bind:class="{ 'has-error': $v.form.old_pin_code.$error }" v-model.trim="form.old_pin_code" v-on:input="$v.form.old_pin_code.$touch">
                         <label>OLD PIN CODE</label>
@@ -71,7 +52,7 @@ import {
 
 import Success from 'components/alert/Success'
 export default {
-    mounted: function(){
+    mounted: function() {
         console.log(this.$parent)
     },
     data: function() {
@@ -102,7 +83,7 @@ export default {
                             html: 'Wrong PIN CODE'
                         })
                         console.log('pin code: ' + doc.CODE)
-                        // console.log(that.old_pin_code)
+                            // console.log(that.old_pin_code)
                     } else {
                         Database.put({
                             _id: doc._id,

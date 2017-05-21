@@ -1,41 +1,5 @@
 <template>
     <q-layout>
-        <div slot="header" class="toolbar green">
-            <!-- opens left-side drawer using its ref -->
-            <button class="hide-on-drawer-visible" @click="$refs.leftDrawer.open()">
-                <i>menu</i>
-            </button>
-            <q-toolbar-title :padding="1" class="text-center">
-                <!-- <i class="material-icons">account_balance</i> -->
-                Finance Performance
-            </q-toolbar-title>
-            <button class="green big" @click="$refs.fiperModal.open()">
-                <i>note_add</i>
-            </button>
-        </div>
-        <!-- Left-side Drawer -->
-        <q-drawer ref="leftDrawer">
-            <div class="toolbar hide-on-drawer-visible green">
-                <i class="material-icons">library_books</i>
-                <q-toolbar-title>
-                    Menu
-                </q-toolbar-title>
-            </div>
-            <div class="list no-border platform-delimiter">
-                <q-drawer-link icon="build" :to="{path: '/settings', exact: true}">
-                    Settings
-                </q-drawer-link>
-                <q-drawer-link icon="cached" :to="{path: '/pinreset', exact: true}">
-                    Reset PIN
-                </q-drawer-link>
-                <q-drawer-link icon="face" :to="{path: '/about', exact: true}">
-                    About Fiper
-                </q-drawer-link>
-                <q-drawer-link icon="exit_to_app" :to="{path: '/logout', exact: true}">
-                    Logout
-                </q-drawer-link>
-            </div>
-        </q-drawer>
         <!-- Modal add -->
         <q-modal ref="fiperModal" class="maximized" :content-css="{padding: '50px'}">
             <q-layout>
@@ -64,7 +28,7 @@
                     </div>
                     <div class="row auto full-width items-center justify-end">
                         <div class="card-title auto row">
-                            <h3>{{ value.fiper_amount }} USD</h3>
+                            <h3>{{ value.fiper_amount }} </h3> USD
                         </div>
                         <div class="fiper-action float-right row">
                             <div class="circular small fiper-logo-wrapper">
@@ -180,8 +144,8 @@ export default {
                 // console.log(flag_height)
                 // console.log(screen_height)
             if (Math.abs(flag_height - screen_height) < 10) {
-                console.log(Math.abs(flag_height - screen_height))
-                console.log('triggred when scroll')
+                // console.log(Math.abs(flag_height - screen_height))
+                // console.log('triggred when scroll')
                 $('#add-fiper').addClass('bottom-scrolled')
             } else {
                 $('#add-fiper').removeClass('bottom-scrolled')

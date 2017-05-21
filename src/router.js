@@ -20,13 +20,24 @@ var router = new VueRouter({
          * If switching back to default "hash" mode, don't forget to set the
          * build publicPath back to '' so Cordova builds work again.
          */
-        routes: [
-            { path: '/', component: load('main/Home') }, // Default
-            { path: '/login', component: load('auth/Auth') },
-            { path: '/fiper/:id', component: load('finance-performance/Fiper') },
+        routes: [{
+                path: '/',
+                component: load('Index'),
+                children: [
+                    { path: '/home', component: load('main/Home'), },
+                    { path: '/analysis', component: load('analysis/Analysis') },
+                    { path: '/settings', component: load('main/Settings'), },
+                    { path: '/about', component: load('main/About'), },
+                ]
+            }, // Default
+            {
+                path: '/login',
+                component: load('auth/Auth'),
+
+            },
+            // { path: '/fiper/:id', component: load('finance-performance/Fiper') },
             { path: '/pinreset', component: load('auth/PinChange'), },
-            { path: '/settings', component: load('main/Settings'), },
-            { path: '/about', component: load('main/About'), },
+
             { path: '/setup', component: load('main/SetupPin'), },
             { path: '/logout', component: load('auth/Logout') },
             { path: '*', component: load('Error404') } // Not found
