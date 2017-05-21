@@ -56,6 +56,9 @@
                     </div>
                 </div>
             </div>
+            <div v-if="empty_fiper" class="row wrap items-center text-center justify-center full-height">
+                <h6 class="text-center result-not-found">Touch the <i>note_add</i> icon to create your first Fiper :)</h6>
+            </div>
             <div id="scroll" v-scroll="detectScroll"></div>
         </div>
         <!-- <draggable @start="drag=true" @end="drag=false"> -->
@@ -89,6 +92,7 @@ import Bus from 'settings/event-bus'
 export default {
     data: function() {
         return {
+            empty_fiper: true,
             fiper_root_type: {
                 outcome: {
                     text: 'Outcome',
@@ -223,7 +227,16 @@ export default {
             Database.get("fiper").then(function(fiper) {
                 console.log(fiper.data)
                 that.$set(that, 'fiper_data', fiper.data)
+                for (var key in fiper.data) {
+                    if (fiper.data[key].length > 0) {
+                        that.$set(that, 'empty_fiper', false)
+                        return false
+
+                    } else {
+                        that.$set(that, 'empty_fiper', true)
+                    }
                     // console.log(doc)
+                }
             }).catch(function(err) {
                 console.log(err)
                 if (err.name === 'not_found') {
@@ -257,7 +270,7 @@ export default {
             var that = this
             var data = Object.assign({}, that.tempo_fiper_data)
             console.log(data.data.fiper_type)
-            if(data.data.fiper_type == '---' || data.data.fiper_type == null){
+            if (data.data.fiper_type == '---' || data.data.fiper_type == null) {
                 Toast.create.negative("You might want to click on the \"Select now\" to choose your category.")
                 return false
             }
