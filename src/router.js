@@ -25,7 +25,7 @@ var router = new VueRouter({
                 component: load('Index'),
                 children: [
                     { path: '/home', component: load('main/Home'), },
-                    { path: '/home/:year/:month', component: load('main/Home'), },
+                    { path: '/home/:year(\\d+)/:month(\\d+)', component: load('main/Home'), },
                     { path: '/analysis', component: load('analysis/Analysis') },
                     { path: '/settings', component: load('main/Settings'), },
                     { path: '/about', component: load('main/About'), },
@@ -41,7 +41,8 @@ var router = new VueRouter({
 
             { path: '/setup', component: load('main/SetupPin'), },
             { path: '/logout', component: load('auth/Logout') },
-            { path: '*', component: load('Error404') } // Not found
+            { path: '*', component: load('Error404') }, // Not found
+
         ]
     })
     // Middleware for router

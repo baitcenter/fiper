@@ -29,11 +29,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Inflow</td>
+                        <td>Income</td>
                         <td class="text-right">{{ get_inflow_performance }} USD</td>
                     </tr>
                     <tr>
-                        <td>Outflow</td>
+                        <td>Outcome</td>
                         <td class="text-right">{{ get_outflow_performance }} USD</td>
                     </tr>
                     <tr>
@@ -43,35 +43,41 @@
                 </tbody>
             </table>
         </div>
-        <div v-for="(fiper_value,fiper_key) in fiper_data" class="full-width fiper-wrapper" :id="'fiper-' + fiper_key">
-            <div v-for="(value,index) in fiper_value" class="card flex items-center wrap justify-start">
-                <div class="row full-width auto">
-                    <div class="tag label bg-green text-white float-left">{{ value.fiper_type_name }}</div>
-                </div>
-                <div class="row auto full-width items-center justify-end">
-                    <div class="card-title auto row">
-                        <h3>{{ value.fiper_amount }} </h3> USD
-                    </div>
-                    <div class="fiper-action float-right row">
-                        <div class="circular small fiper-logo-wrapper">
-                            <img class="button fiper-logo small" :src="get_fiper_type_img(value)">
+        <div class="date-fiper-wrapper" v-for="(data,day) in render_fiper_data" :id="'day-' + day">
+            <div class="text-left pointing-left label bg-green text-white">
+                <h6>{{ get_date_string(day) }}</h6></div>
+            <div v-for="(fiper_value,fiper_key) in data" class="full-width fiper-wrapper" :id="'fiper-' + fiper_key">
+                <div v-for="(value,index) in fiper_value" class="card flex items-center wrap justify-start">
+                    <!-- <div class="row full-width auto">
+                        <div class="tag label bg-green text-white float-left"> {{ fiper_root_type[fiper_key].text }}
                         </div>
-                        <button class="green circular small outline" @click="openEditFiper(value.fiper_uid,fiper_key)"><i class="material-icons">edit</i></button>
-                        <button class="green circular small" @click="removeFiperPrompt(value.fiper_uid,fiper_key)"><i class="material-icons">delete</i></button>
-                    </div>
-                </div>
-                <div class="full-width auto">
-                    <div class="row full-width auto wrap">
-                        <div class="row fiper-data self-stretch full-width auto">
-                            <div class="card-content wrap auto">
-                                <h5> {{ value.fiper_name }}</h5>
-                                <div>{{ value.fiper_des }}</div>
+                    </div> -->
+                    <div class="row auto full-width items-center justify-end">
+                        <div class="card-title auto row">
+                            <h3>{{ value.fiper_amount }} </h3> USD
+                        </div>
+                        <div class="fiper-action float-right row">
+                            <div class="circular small fiper-logo-wrapper">
+                                <img class="button fiper-logo small" :src="get_fiper_type_img(value)">
                             </div>
+                            <button class="green circular small outline" @click="openEditFiper(value.fiper_uid,fiper_key)"><i class="material-icons">edit</i></button>
+                            <button class="green circular small" @click="removeFiperPrompt(value.fiper_uid,fiper_key)"><i class="material-icons">delete</i></button>
                         </div>
-                        <div class="row full-width auto items-center fiper-extra-info">
-                            <div class="float-left auto">{{ get_fiper_date(value) }}</div>
-                            <div class="fiper-root-type chip label bg-grey-4 float-right">
-                                {{ fiper_root_type[fiper_key].text }}
+                    </div>
+                    <div class="full-width auto">
+                        <div class="row full-width auto wrap">
+                            <div class="row fiper-data self-stretch full-width auto">
+                                <div class="card-content wrap auto">
+                                    <h6> {{ value.fiper_name }}</h6>
+                                    <div>{{ value.fiper_des }}</div>
+                                </div>
+                            </div>
+                            <div class="row full-width auto items-center fiper-extra-info">
+                                <div class="float-left auto">{{ get_fiper_date(value) }}</div>
+                                <div class="fiper-root-type chip label bg-green text-white float-right">
+                                    <!-- {{ value.fiper_type_name }}  -->
+                                    {{ fiper_root_type[fiper_key].text }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -114,30 +120,7 @@ import {
 // TODO: use Bus instead
 
 export default {
-    watch: {
-        '$route': {
-            handler(to, from) {
-                // react to route changes...
-                console.log('month: ' + this.$route.params.month)
-                console.log('year: ' + this.$route.params.year)
-                var that = this
-                if (that.$route.params.month != 'undefined' && that.$route.params.year != 'undefined') {
-                    var data = {
-                        year: that.$route.params.year,
-                        month: that.$route.params.month
-                    }
-                    that.$set(that, 'date', data)
-                }
-            }
-        },
-        'date': {
-            handler(oldVal, newVal) {
-                var that = this
-                that.fetch_fiper_data()
-            },
-            deep: true
-        }
-    },
+
     data: function() {
         return {
             date: {
@@ -170,6 +153,22 @@ export default {
             }
         }
     },
+    watch: {
+        '$route': {
+            handler(to, from) {
+
+                var that = this
+                that.set_date()
+            }
+        },
+        'date': {
+            handler(oldVal, newVal) {
+                var that = this
+                that.fetch_fiper_data()
+            },
+            deep: true
+        }
+    },
     beforeDestroy: function() {
         Bus.$emit('destroy_fiper_component')
     },
@@ -183,13 +182,11 @@ export default {
             page_title: 'Finance Performance',
             page_subtitle: 'today'
         })
-        var _date = moment().format()
-        var date = new Date(_date)
-        that.$set(that.date, 'month', date.getMonth() + 1)
-        that.$set(that.date, 'year', date.getFullYear())
+        that.set_date()
 
     },
     mounted: function() {
+        var that = this
 
     },
     computed: {
@@ -203,7 +200,10 @@ export default {
                 var inflow = that.fiper_data.income.reduce(function(prevValue, elem) {
                     return prevValue + elem.fiper_amount
                 }, 0)
-                return inflow
+                var inflow_from_debts = that.fiper_data.debts_and_loans.reduce(function(prevValue, elem) {
+                    return prevValue + (elem.fiper_type == 'debt' ? elem.fiper_amount : 0)
+                }, 0)
+                return inflow + inflow_from_debts
             } catch (err) {
                 return 0
             }
@@ -212,18 +212,87 @@ export default {
         get_outflow_performance: function() {
             var that = this
             try {
-                var inflow = that.fiper_data.outcome.reduce(function(prevValue, elem) {
+                var outflow = that.fiper_data.outcome.reduce(function(prevValue, elem) {
                     return prevValue + elem.fiper_amount
                 }, 0)
-                return inflow
+                var outflow_from_loan = that.fiper_data.debts_and_loans.reduce(function(prevValue, elem) {
+                    return prevValue + (elem.fiper_type == 'loan' ? elem.fiper_amount : 0)
+                }, 0)
+                return outflow + outflow_from_loan
             } catch (err) {
                 return 0
             }
         },
     },
     methods: {
+        get_date_string: function(day) {
+            var that = this
+            var date = new Date(that.date.year, that.date.month - 1, day)
+            return date.toDateString()
+        },
+        set_date: function() {
+            var that = this
+                // react to route changes...
+            console.log('month: ' + that.$route.params.month)
+            console.log('year: ' + that.$route.params.year)
+            if (typeof that.$route.params.month !== 'undefined' && typeof that.$route.params.year !== 'undefined') {
+                // console.log('1st')
+                // Check conditions
+                if ((that.$route.params.month < 1 || that.$route.params.month > 12) || (that.$route.params.year < 0)) {
+                    Bus.$emit('receive_child_info', {
+                        page_title: 'Finance Performance',
+                        page_subtitle: 'Invalid month or year'
+                    })
+                    return false
+                }
+                var data = {
+                        year: that.$route.params.year,
+                        month: that.$route.params.month
+                    }
+                    // console.log(data)
+                that.$set(that, 'date', data)
+            } else {
+                console.log('here')
+                var _date = moment().format()
+                var date = new Date(_date)
+                var data = {
+                        month: date.getMonth() + 1,
+                        year: date.getFullYear(),
+                        current: true
+                    }
+                    // console.log(data)
+                that.$set(that, 'date', data)
+            }
+            Bus.$emit('receive_child_info', {
+                page_title: 'Finance Performance',
+                page_subtitle: typeof that.date.current !== 'undefined' ? 'This Month' : that.date.month + '/' + that.date.year
+            })
+            console.log(that.date)
+        },
         sort_fiper_data_with_date: function() {
+            var that = this
+            var data_container = []
+            var origin_data = Object.assign({}, that.fiper_data)
+            var render_data = {}
+            for (var key in origin_data) {
+                origin_data[key].map(function(elem) {
+                    var elem_date = new Date(elem.fiper_date)
+                    var date_key = elem_date.getDate()
+                    if (typeof data_container[date_key] === 'undefined') {
+                        data_container.push(date_key)
+                    }
+                    if (typeof render_data[date_key] === 'undefined') {
+                        render_data[date_key] = {}
+                    }
+                    if (typeof render_data[date_key][key] === 'undefined') {
+                        render_data[date_key][key] = []
+                    }
+                    render_data[date_key][key].push(elem)
+                })
+            }
+            console.log(render_data)
 
+            return render_data
         },
         startingFiper: function(instance) {
             var that = this
@@ -317,7 +386,7 @@ export default {
         get_fiper_type_img: function(fiper) {
             return STATIC_URL + '/category/' + fiper.fiper_root_type + '_' + fiper.fiper_type + '.png'
         },
-        fetch_fiper_data: function() {
+        fetch_fiper_data: function(date = null) {
             var that = this
             var fiper_data = {}
             var fiper_empty_status = []
@@ -326,7 +395,10 @@ export default {
                 for (var key in fiper.data) {
                     var data = fiper.data[key].filter(function(elem) {
                         var elem_date = new Date(elem.fiper_date)
-                        return that.date.month == elem_date.getMonth() + 1 && that.date.year == elem_date.getFullYear()
+                        if (date == null) return that.date.month == elem_date.getMonth() + 1 && that.date.year == elem_date.getFullYear()
+                        else {
+                            return date.month == elem_date.getMonth() + 1 && date.year == elem_date.getFullYear()
+                        }
                     })
                     fiper_data[key] = data
                     if (fiper_data[key].length > 0) {
@@ -342,9 +414,9 @@ export default {
                     that.$set(that, 'empty_fiper', false)
                 } else {
                     that.$set(that, 'empty_fiper', true)
-
                 }
 
+                that.$set(that, 'render_fiper_data', that.sort_fiper_data_with_date())
 
             }).catch(function(err) {
                 console.log(err)
