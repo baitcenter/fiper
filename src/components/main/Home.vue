@@ -8,7 +8,7 @@
                         <i>keyboard_arrow_left</i>
                     </button>
                     <q-toolbar-title :padding="1">
-                        {{ tempo_fiper_data.fiper_index != null ? 'Update "' + tempo_fiper_data.data.fiper_name + '"' : 'Create new Fiper' }}
+                        {{ tempo_fiper_data.fiper_uid != null ? 'Update "' + tempo_fiper_data.data.fiper_name + '"' : 'Create new Fiper' }}
                     </q-toolbar-title>
                 </div>
                 <div class="layout-view">
@@ -489,13 +489,16 @@ export default {
                 // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
-                    console.log(data)
+                    console.log(fiper.data)
                         // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
                     var index = fiper.data[data.fiper_root_type].map(function(elem, index, inside_array) {
                         return elem.fiper_uid;
                     }).indexOf(fiper_uid);
                     console.log('index is ' + index)
+                    console.log(fiper.data[data.fiper_root_type][index])
                     fiper.data[data.fiper_root_type][index] = data
+                    console.log(fiper.data[data.fiper_root_type][index])
+
                     return Database.put(fiper).then(function(updated_fiper) {
 
                             console.log('update ' + updated_fiper.id + ' successfully')
