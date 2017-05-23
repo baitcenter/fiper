@@ -74,7 +74,7 @@ export default {
     },
     created: function() {
         var that = this
-        Router.push('/home')
+        // Router.push('/home')
         Bus.$on('receive_child_info', function(data) {
             console.log('receive child info')
             that.$set(that, 'child_info', data)

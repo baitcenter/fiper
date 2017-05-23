@@ -56,8 +56,8 @@
                         <div class="circular small fiper-logo-wrapper">
                             <img class="button fiper-logo small" :src="get_fiper_type_img(value)">
                         </div>
-                        <button class="green circular small outline" @click="openEditFiper(value.uid,fiper_key)"><i class="material-icons">edit</i></button>
-                        <button class="green circular small" @click="removeFiperPrompt(value.uid,fiper_key)"><i class="material-icons">delete</i></button>
+                        <button class="green circular small outline" @click="openEditFiper(value.fiper_uid,fiper_key)"><i class="material-icons">edit</i></button>
+                        <button class="green circular small" @click="removeFiperPrompt(value.fiper_uid,fiper_key)"><i class="material-icons">delete</i></button>
                     </div>
                 </div>
                 <div class="full-width auto">
@@ -109,14 +109,41 @@ import moment from 'moment'
 import {
     Utils
 } from 'quasar'
-// import draggable from 'vuedraggable'
 
 // TODO: use drag and drop
 // TODO: use Bus instead
 
 export default {
+    watch: {
+        '$route': {
+            handler(to, from) {
+                // react to route changes...
+                console.log('month: ' + this.$route.params.month)
+                console.log('year: ' + this.$route.params.year)
+                var that = this
+                if (that.$route.params.month != 'undefined' && that.$route.params.year != 'undefined') {
+                    var data = {
+                        year: that.$route.params.year,
+                        month: that.$route.params.month
+                    }
+                    that.$set(that, 'date', data)
+                }
+            }
+        },
+        'date': {
+            handler(oldVal, newVal) {
+                var that = this
+                that.fetch_fiper_data()
+            },
+            deep: true
+        }
+    },
     data: function() {
         return {
+            date: {
+                month: '',
+                year: ''
+            },
             empty_fiper: true,
             fiper_root_type: {
                 outcome: {
@@ -132,10 +159,13 @@ export default {
             tempo_fiper_data: {
                 data: null,
                 instance: null,
-                fiper_index: null,
+                fiper_uid: null,
                 fiper_key: null
             },
             fiper_data: {
+
+            },
+            render_fiper_data: {
 
             }
         }
@@ -145,6 +175,7 @@ export default {
     },
     created: function() {
         var that = this
+
         console.log('STATIC_URL is ' + STATIC_URL)
             // this.$set('text', this.$parent.global_text)
         Bus.$emit('receive_fiper_component', that)
@@ -152,13 +183,14 @@ export default {
             page_title: 'Finance Performance',
             page_subtitle: 'today'
         })
-        that.fetch_fiper_data()
+        var _date = moment().format()
+        var date = new Date(_date)
+        that.$set(that.date, 'month', date.getMonth() + 1)
+        that.$set(that.date, 'year', date.getFullYear())
+
     },
     mounted: function() {
-        // console.log(moment().format())
-        var _date = moment().format();
-        var date = new Date(_date)
-        console.log(date)
+
     },
     computed: {
         get_total_performance: function() {
@@ -190,19 +222,22 @@ export default {
         },
     },
     methods: {
+        sort_fiper_data_with_date: function() {
+
+        },
         startingFiper: function(instance) {
             var that = this
                 // This methods is to receive fiper instance, comfortable to communicate
             that.$set(that.tempo_fiper_data, 'instance', instance)
             console.log('binding instance successfully')
         },
-        openEditFiper: function(uid, fiper_key) {
+        openEditFiper: function(fiper_uid, fiper_key) {
             var that = this
             var data = {
                 fiper_key: fiper_key,
-                fiper_uid: uid
+                fiper_uid: fiper_uid
             }
-            that.$set(that.tempo_fiper_data, 'fiper_uid', uid) // Set tempo data
+            that.$set(that.tempo_fiper_data, 'fiper_uid', fiper_uid) // Set tempo data
             that.$set(that.tempo_fiper_data, 'fiper_key', fiper_key) // Set tempo data
             that.tempo_fiper_data.instance.$emit('fetch_single_fiper_data', data)
             that.$refs.fiperModal.open()
@@ -230,7 +265,7 @@ export default {
             var date = new Date(fiper.fiper_date)
             return date.toDateString()
         },
-        removeFiperPrompt: function(index, fiper_key) {
+        removeFiperPrompt: function(fiper_uid, fiper_key) {
             var that = this
             Dialog.create({
                 title: 'Are you sure?',
@@ -245,26 +280,26 @@ export default {
                     label: 'Yes',
                     classes: 'green outline',
                     handler() {
-                        that.removeFiper(index, fiper_key)
+                        that.removeFiper(fiper_uid, fiper_key)
                     }
                 }]
             })
         },
-        removeFiper: function(uid, fiper_key) {
+        removeFiper: function(fiper_uid, fiper_key) {
             var that = this
                 // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
 
             Database.get("fiper").then(function(doc_fiper) {
                 console.log(that.fiper_data)
                 var index = doc_fiper.data[fiper_key].map(function(elem, index, inside_array) {
-                    return elem.uid;
-                }).indexOf(uid);
+                    return elem.fiper_uid;
+                }).indexOf(fiper_uid);
 
                 console.log(index)
                 console.log(fiper_key)
                 doc_fiper.data[fiper_key].splice(index, 1)
                 that.$set(that.fiper_data, fiper_key, doc_fiper.data[fiper_key])
-                // console.log(doc)
+                    // console.log(doc)
                 return Database.put(doc_fiper).then(function(res) {
                     console.log('Delete fiper with id (' + fiper_key + ', ' + index + ') successfully')
                     that.fetch_fiper_data()
@@ -284,19 +319,33 @@ export default {
         },
         fetch_fiper_data: function() {
             var that = this
+            var fiper_data = {}
+            var fiper_empty_status = []
             Database.get("fiper").then(function(fiper) {
                 console.log(fiper.data)
-                that.$set(that, 'fiper_data', fiper.data)
                 for (var key in fiper.data) {
-                    if (fiper.data[key].length > 0) {
-                        that.$set(that, 'empty_fiper', false)
-                        return false
-
+                    var data = fiper.data[key].filter(function(elem) {
+                        var elem_date = new Date(elem.fiper_date)
+                        return that.date.month == elem_date.getMonth() + 1 && that.date.year == elem_date.getFullYear()
+                    })
+                    fiper_data[key] = data
+                    if (fiper_data[key].length > 0) {
+                        fiper_empty_status.push(false)
                     } else {
-                        that.$set(that, 'empty_fiper', true)
+                        fiper_empty_status.push(true)
                     }
                     // console.log(doc)
                 }
+                console.log(fiper_data)
+                that.$set(that, 'fiper_data', fiper_data)
+                if (fiper_empty_status.indexOf(false) != -1) {
+                    that.$set(that, 'empty_fiper', false)
+                } else {
+                    that.$set(that, 'empty_fiper', true)
+
+                }
+
+
             }).catch(function(err) {
                 console.log(err)
                 if (err.name === 'not_found') {
@@ -338,8 +387,8 @@ export default {
                 that.tempo_fiper_data.instance.$emit('reset_fiper_data') // Reset data first
 
 
-                if (data.fiper_index != null) {
-                    that.updateFiper(data.fiper_index, data.data)
+                if (data.fiper_uid != null) {
+                    that.updateFiper(data.fiper_uid, data.data)
                 } else {
                     that.addNewFiper(data.data)
                 }
@@ -363,7 +412,7 @@ export default {
             }
             that.$refs.fiperModal.close()
         },
-        updateFiper: function(uid, data) {
+        updateFiper: function(fiper_uid, data) {
             var that = this
                 // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
@@ -371,9 +420,9 @@ export default {
                     console.log(data)
                         // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
                     var index = fiper.data[data.fiper_root_type].map(function(elem, index, inside_array) {
-                        return e.uid;
-                    }).indexOf(uid);
-
+                        return elem.fiper_uid;
+                    }).indexOf(fiper_uid);
+                    console.log('index is ' + index)
                     fiper.data[data.fiper_root_type][index] = data
                     return Database.put(fiper).then(function(updated_fiper) {
 
@@ -403,7 +452,7 @@ export default {
                 // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
-                    data.uid = Utils.uid()
+                    data.fiper_uid = Utils.uid()
                     console.log(fiper.data)
 
                     fiper.data[data.fiper_root_type].push(data)

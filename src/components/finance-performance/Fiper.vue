@@ -81,11 +81,7 @@ import Database from 'settings/database'
 import $ from "jquery";
 
 export default {
-
     methods: {
-        fetch_fiper_data: function() {
-
-        },
         restoreSearchData: function() {
             var that = this
             var origin_data = Object.assign({}, that.fiper_group)
@@ -142,7 +138,7 @@ export default {
         resetFiperData: function() {
             var that = this
             var data = {
-                uid: "",
+                fiper_uid: "",
                 fiper_type: "---",
                 fiper_date: moment().format(),
                 fiper_name: "",
@@ -196,7 +192,7 @@ export default {
     data: function() {
         return {
             form: {
-                uid: "",
+                fiper_uid: "",
                 fiper_type: "---",
                 fiper_date: moment().format(),
                 fiper_name: "",
@@ -231,7 +227,7 @@ export default {
             Database.get('fiper').then(function(fiper) {
                 console.log(data)
                 var index = fiper.data[data.fiper_key].map(function(elem, index, inside_array) {
-                    return elem.uid;
+                    return elem.fiper_uid;
                 }).indexOf(data.fiper_uid);
                 console.log(fiper.data)
                 var fiper_data = fiper.data[data.fiper_key][index]

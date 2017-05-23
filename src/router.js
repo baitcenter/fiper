@@ -25,6 +25,7 @@ var router = new VueRouter({
                 component: load('Index'),
                 children: [
                     { path: '/home', component: load('main/Home'), },
+                    { path: '/home/:year/:month', component: load('main/Home'), },
                     { path: '/analysis', component: load('analysis/Analysis') },
                     { path: '/settings', component: load('main/Settings'), },
                     { path: '/about', component: load('main/About'), },
