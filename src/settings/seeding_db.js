@@ -130,9 +130,9 @@ Database.get("fiper").then(function(doc) {
         return Database.put({
             _id: "fiper",
             data: {
-                income: [],
-                outcome: [],
-                debts_and_loans: []
+                income: {},
+                outcome: {},
+                debts_and_loans: {}
             }
         }).then(function(res) {
             console.log("Updated " + res.toString() + ', redirect to home')

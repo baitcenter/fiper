@@ -59,10 +59,10 @@ router.beforeResolve((to, from, next) => {
             return false
         } else {
             // // Default redirect
-            // if (to.fullPath == '/') {
-            //     next('/home')
-            //     return false
-            // }
+            if (to.fullPath == '/') {
+                next('/home')
+                return false
+            }
             // Required /setup to redirect to home, fuck, and this is default
             if (to.fullPath == '/setup') {
                 next('/')

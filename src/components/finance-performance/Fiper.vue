@@ -142,6 +142,7 @@ export default {
         resetFiperData: function() {
             var that = this
             var data = {
+                uid: "",
                 fiper_type: "---",
                 fiper_date: moment().format(),
                 fiper_name: "",
@@ -195,6 +196,7 @@ export default {
     data: function() {
         return {
             form: {
+                uid: "",
                 fiper_type: "---",
                 fiper_date: moment().format(),
                 fiper_name: "",
@@ -227,7 +229,12 @@ export default {
         that.$emit('set_tempo_fiper_data', that.form)
         that.$on('fetch_single_fiper_data', function(data) {
             Database.get('fiper').then(function(fiper) {
-                var fiper_data = fiper.data[data.fiper_root_type][data.index]
+                console.log(data)
+                var index = fiper.data[data.fiper_key].map(function(elem, index, inside_array) {
+                    return elem.uid;
+                }).indexOf(data.fiper_uid);
+                console.log(fiper.data)
+                var fiper_data = fiper.data[data.fiper_key][index]
                 that.$set(that, 'form', fiper_data)
                 console.log('fetching fiper data successfully')
             }).catch(function(err) {

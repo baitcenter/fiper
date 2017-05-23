@@ -32,8 +32,8 @@
                         <span class="error-message" v-if="$v.form.re_pin_code.$error"> PIN CODE not match </span>
                     </div>
                     <div class="row justify-center wrap">
-                        <button id="setup-pin" class="primary outline" @click="submit()">Submit</button>
-                        <button id="reset-pin" class="secondary" @click="reset()">Reset</button>
+                        <button id="setup-pin" class="green outline" @click="submit()">Submit</button>
+                        <button id="reset-pin" class="green" @click="reset()">Reset</button>
                     </div>
                 </div>
             </div>

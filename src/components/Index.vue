@@ -13,8 +13,9 @@
             <button v-if="fiper_component != null" class="green big" @click="fiper_component.$refs.fiperModal.open()">
                 <i>note_add</i>
             </button>
+        
         </div>
-        <router-view class="layout-view"></router-view>
+    
         <!-- Left-side Drawer -->
         <q-drawer ref="leftDrawer">
             <div class="toolbar hide-on-drawer-visible green">
@@ -44,6 +45,7 @@
                 </q-drawer-link>
             </div>
         </q-drawer>
+        <router-view class="layout-view"></router-view>
     </q-layout>
 </template>
 <script>
@@ -68,15 +70,17 @@ export default {
 
     },
     methods: {
-
+        
     },
-    mounted: function() {
+    created: function() {
         var that = this
         Router.push('/home')
         Bus.$on('receive_child_info', function(data) {
+            console.log('receive child info')
             that.$set(that, 'child_info', data)
         })
         Bus.$on('receive_fiper_component', function(component) {
+            console.log('receive fiper component')
             that.$set(that, 'fiper_component', component)
         })
         Bus.$on('destroy_fiper_component', function() {

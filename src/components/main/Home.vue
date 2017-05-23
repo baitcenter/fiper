@@ -1,5 +1,5 @@
 <template>
-    <q-layout>
+    <div class="layout-view">
         <!-- Modal add -->
         <q-modal ref="fiperModal" class="maximized" :content-css="{padding: '50px'}">
             <q-layout>
@@ -20,55 +20,76 @@
                 </div>
             </q-layout>
         </q-modal>
-        <div class="layout-view">
-            <div v-for="(fiper_value,fiper_key) in fiper_data" class="fiper-wrapper" :id="'fiper-' + fiper_key">
-                <div v-for="(value,index) in fiper_value" class="card flex items-center wrap justify-start">
-                    <div class="row full-width auto">
-                        <div class="tag label bg-green text-white float-left">{{ value.fiper_type_name }}</div>
+        <div v-if="!empty_fiper" class="performance-wrapper full-width auto">
+            <table class="q-table bordered highlight horizontal-delimiter loose full-width auto text-left">
+                <thead>
+                    <tr>
+                        <th colspan="2" class="text-center">OVERVIEW</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Inflow</td>
+                        <td class="text-right">{{ get_inflow_performance }} USD</td>
+                    </tr>
+                    <tr>
+                        <td>Outflow</td>
+                        <td class="text-right">{{ get_outflow_performance }} USD</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="text-right">{{ get_total_performance }} USD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div v-for="(fiper_value,fiper_key) in fiper_data" class="full-width fiper-wrapper" :id="'fiper-' + fiper_key">
+            <div v-for="(value,index) in fiper_value" class="card flex items-center wrap justify-start">
+                <div class="row full-width auto">
+                    <div class="tag label bg-green text-white float-left">{{ value.fiper_type_name }}</div>
+                </div>
+                <div class="row auto full-width items-center justify-end">
+                    <div class="card-title auto row">
+                        <h3>{{ value.fiper_amount }} </h3> USD
                     </div>
-                    <div class="row auto full-width items-center justify-end">
-                        <div class="card-title auto row">
-                            <h3>{{ value.fiper_amount }} </h3> USD
+                    <div class="fiper-action float-right row">
+                        <div class="circular small fiper-logo-wrapper">
+                            <img class="button fiper-logo small" :src="get_fiper_type_img(value)">
                         </div>
-                        <div class="fiper-action float-right row">
-                            <div class="circular small fiper-logo-wrapper">
-                                <img class="button fiper-logo small" :src="get_fiper_type_img(value,index,fiper_key)">
-                            </div>
-                            <button class="green circular small outline" @click="openEditFiper(index,fiper_key)"><i class="material-icons">edit</i></button>
-                            <button class="green circular small" @click="removeFiperPrompt(index,fiper_key)"><i class="material-icons">delete</i></button>
-                        </div>
+                        <button class="green circular small outline" @click="openEditFiper(value.uid,fiper_key)"><i class="material-icons">edit</i></button>
+                        <button class="green circular small" @click="removeFiperPrompt(value.uid,fiper_key)"><i class="material-icons">delete</i></button>
                     </div>
-                    <div class="full-width auto">
-                        <div class="row full-width auto wrap">
-                            <div class="row fiper-data self-stretch full-width auto">
-                                <div class="card-content wrap auto">
-                                    <h5> {{ value.fiper_name }}</h5>
-                                    <div>{{ value.fiper_des }}</div>
-                                </div>
+                </div>
+                <div class="full-width auto">
+                    <div class="row full-width auto wrap">
+                        <div class="row fiper-data self-stretch full-width auto">
+                            <div class="card-content wrap auto">
+                                <h5> {{ value.fiper_name }}</h5>
+                                <div>{{ value.fiper_des }}</div>
                             </div>
-                            <div class="row full-width auto items-center fiper-extra-info">
-                                <div class="float-left auto">{{ get_fiper_date(value) }}</div>
-                                <div class="fiper-root-type chip label bg-grey-4 float-right">
-                                    {{ fiper_root_type[fiper_key].text }}
-                                </div>
+                        </div>
+                        <div class="row full-width auto items-center fiper-extra-info">
+                            <div class="float-left auto">{{ get_fiper_date(value) }}</div>
+                            <div class="fiper-root-type chip label bg-grey-4 float-right">
+                                {{ fiper_root_type[fiper_key].text }}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="empty_fiper" class="row wrap items-center text-center justify-center full-height">
-                <h6 class="text-center result-not-found">Touch the <i>note_add</i> icon to create your first Fiper :)</h6>
-            </div>
-            <div id="scroll" v-scroll="detectScroll"></div>
         </div>
+        <div v-if="empty_fiper" class="row wrap items-center text-center justify-center full-height">
+            <h6 class="text-center result-not-found">Touch the <i>note_add</i> icon to create your first Fiper :)</h6>
+        </div>
+        <div id="scroll" v-scroll="detectScroll"></div>
         <!-- <draggable @start="drag=true" @end="drag=false"> -->
         <button id="add-fiper" class="primary green circular fixed-bottom-right btn-primary big" @click="$refs.fiperModal.open()">
             <i>note_add</i>
         </button>
-        <!-- </draggable> -->
-        <!-- Router view here -->
-        <!-- <button class="primary green" @click="add">Click to log</button> -->
-    </q-layout>
+    </div>
+    <!-- </draggable> -->
+    <!-- Router view here -->
+    <!-- <button class="primary green" @click="add">Click to log</button> -->
 </template>
 <script type="text/javascript">
 import Database from 'settings/database'
@@ -84,6 +105,10 @@ import {
 } from 'quasar'
 import Success from 'components/alert/Success'
 import Bus from 'settings/event-bus'
+import moment from 'moment'
+import {
+    Utils
+} from 'quasar'
 // import draggable from 'vuedraggable'
 
 // TODO: use drag and drop
@@ -118,8 +143,7 @@ export default {
     beforeDestroy: function() {
         Bus.$emit('destroy_fiper_component')
     },
-    mounted: function() {
-        // Setup jquery API
+    created: function() {
         var that = this
         console.log('STATIC_URL is ' + STATIC_URL)
             // this.$set('text', this.$parent.global_text)
@@ -130,6 +154,41 @@ export default {
         })
         that.fetch_fiper_data()
     },
+    mounted: function() {
+        // console.log(moment().format())
+        var _date = moment().format();
+        var date = new Date(_date)
+        console.log(date)
+    },
+    computed: {
+        get_total_performance: function() {
+            var that = this
+            return that.get_inflow_performance - that.get_outflow_performance
+        },
+        get_inflow_performance: function() {
+            var that = this
+            try {
+                var inflow = that.fiper_data.income.reduce(function(prevValue, elem) {
+                    return prevValue + elem.fiper_amount
+                }, 0)
+                return inflow
+            } catch (err) {
+                return 0
+            }
+
+        },
+        get_outflow_performance: function() {
+            var that = this
+            try {
+                var inflow = that.fiper_data.outcome.reduce(function(prevValue, elem) {
+                    return prevValue + elem.fiper_amount
+                }, 0)
+                return inflow
+            } catch (err) {
+                return 0
+            }
+        },
+    },
     methods: {
         startingFiper: function(instance) {
             var that = this
@@ -137,13 +196,13 @@ export default {
             that.$set(that.tempo_fiper_data, 'instance', instance)
             console.log('binding instance successfully')
         },
-        openEditFiper: function(index, fiper_key) {
+        openEditFiper: function(uid, fiper_key) {
             var that = this
             var data = {
-                fiper_root_type: fiper_key,
-                index: index
+                fiper_key: fiper_key,
+                fiper_uid: uid
             }
-            that.$set(that.tempo_fiper_data, 'fiper_index', index) // Set tempo data
+            that.$set(that.tempo_fiper_data, 'fiper_uid', uid) // Set tempo data
             that.$set(that.tempo_fiper_data, 'fiper_key', fiper_key) // Set tempo data
             that.tempo_fiper_data.instance.$emit('fetch_single_fiper_data', data)
             that.$refs.fiperModal.open()
@@ -191,19 +250,20 @@ export default {
                 }]
             })
         },
-        removeFiper: function(index, fiper_key) {
+        removeFiper: function(uid, fiper_key) {
             var that = this
-            console.log(index)
-            var new_data = that.fiper_data[fiper_key].splice(index, 1)
-            console.log(new_data)
-            that.$set(that.fiper_data, fiper_key, that.fiper_data[fiper_key])
+                // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
+
             Database.get("fiper").then(function(doc_fiper) {
                 console.log(that.fiper_data)
-                    // that.$set(that, 'fiper_data', fiper.data)
-                console.log(doc_fiper.data)
-                doc_fiper.data = that.fiper_data;
-                console.log(doc_fiper.data)
+                var index = doc_fiper.data[fiper_key].map(function(elem, index, inside_array) {
+                    return elem.uid;
+                }).indexOf(uid);
 
+                console.log(index)
+                console.log(fiper_key)
+                doc_fiper.data[fiper_key].splice(index, 1)
+                that.$set(that.fiper_data, fiper_key, doc_fiper.data[fiper_key])
                 // console.log(doc)
                 return Database.put(doc_fiper).then(function(res) {
                     console.log('Delete fiper with id (' + fiper_key + ', ' + index + ') successfully')
@@ -303,12 +363,17 @@ export default {
             }
             that.$refs.fiperModal.close()
         },
-        updateFiper: function(index, data) {
+        updateFiper: function(uid, data) {
             var that = this
                 // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
                     console.log(data)
+                        // https://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
+                    var index = fiper.data[data.fiper_root_type].map(function(elem, index, inside_array) {
+                        return e.uid;
+                    }).indexOf(uid);
+
                     fiper.data[data.fiper_root_type][index] = data
                     return Database.put(fiper).then(function(updated_fiper) {
 
@@ -338,7 +403,9 @@ export default {
                 // var data = that.tempo_fiper_data.data
             if (data != null && typeof data == typeof {}) {
                 Database.get("fiper").then(function(fiper) {
+                    data.uid = Utils.uid()
                     console.log(fiper.data)
+
                     fiper.data[data.fiper_root_type].push(data)
                     return Database.put(fiper).then(function(new_fiper) {
 
