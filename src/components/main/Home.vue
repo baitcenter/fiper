@@ -21,11 +21,10 @@
             </q-layout>
         </q-modal>
         <div v-if="!empty_fiper" class="performance-wrapper full-width auto">
-            <table class="q-table bordered highlight horizontal-delimiter loose full-width auto text-left">
+            <table class="q-table highlight loose full-width auto text-left">
                 <thead>
-                    <tr>
-                        <th colspan="2" class="text-center">OVERVIEW</th>
-                    </tr>
+                    <div class="text-left pointing-left label bg-green text-white">
+                        <h6>Overview</h6></div>
                 </thead>
                 <tbody>
                     <tr>
@@ -45,7 +44,8 @@
         </div>
         <div class="date-fiper-wrapper" v-for="(data,day) in render_fiper_data" :id="'day-' + day">
             <div class="text-left pointing-left label bg-green text-white">
-                <h6>{{ get_date_string(day) }}</h6></div>
+                <h6>{{ get_date_string(day) }}</h6>
+            </div>
             <div v-for="(fiper_value,fiper_key) in data" class="full-width fiper-wrapper" :id="'fiper-' + fiper_key">
                 <div v-for="(value,index) in fiper_value" class="card flex items-center wrap justify-start">
                     <!-- <div class="row full-width auto">
@@ -275,7 +275,8 @@ export default {
             var origin_data = Object.assign({}, that.fiper_data)
             var render_data = {}
             for (var key in origin_data) {
-                origin_data[key].map(function(elem) {
+                // console.log(origin_data[key].reverse())
+                origin_data[key].reverse().map(function(elem) {
                     var elem_date = new Date(elem.fiper_date)
                     var date_key = elem_date.getDate()
                     if (typeof data_container[date_key] === 'undefined') {
@@ -291,7 +292,13 @@ export default {
                 })
             }
             console.log(render_data)
-
+                // Sort from lastest to oldest
+            // const exact_render_data = {}
+            // Object.keys(render_data).sort().reverse().forEach(function(key) {
+            //     exact_render_data[key] = render_data[key];
+            //     console.log(key)
+            // });
+            // console.log(exact_render_data)
             return render_data
         },
         startingFiper: function(instance) {

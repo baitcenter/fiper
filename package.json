@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.0.0",
+    "chart.js": "^2.5.0",
     "fastclick": "^1.0.6",
     "jquery": "^3.2.1",
     "material-design-icons": "^3.0.1",
@@ -21,6 +22,7 @@
     "quasar-framework": "^0.13.6",
     "roboto-fontface": "^0.7.0",
     "vue": "^2.3.0",
+    "vue-chartjs": "^2.6.3",
     "vue-router": "^2.0.0",
     "vuedraggable": "github:SortableJS/Vue.Draggable",
     "vuelidate": "^0.4.3"
