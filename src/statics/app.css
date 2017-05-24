@@ -1,22 +1,35 @@
 /* Created by khangtd */
-.label.outline{
+.select-title{
+    margin-right: 30px;
+}
+.select-year-wrapper {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-left: 10px
+}
+
+.label.outline {
     border: 1px solid #4caf50;
     color: #4caf50!important;
     background: transparent!important;
 }
-.trend-wrapper{
+
+.trend-wrapper {
     padding-top: 30px;
 }
-.chart-wrapper{
+
+.chart-wrapper {
     padding: 10px;
 }
-.performance-wrapper{
+
+.performance-wrapper {
     margin-top: 30px;
 }
-.date-fiper-wrapper{
-    margin: 50px 0;
 
+.date-fiper-wrapper {
+    margin: 50px 0;
 }
+
 .card-title {
     overflow: auto
 }
@@ -52,7 +65,9 @@
 
 .card {
     margin-top: 20px;
+    margin-bottom: 0px;
     word-wrap: break-word;
+    /*background: #fbfbfb;*/
 }
 
 .fiper-action {
@@ -112,7 +127,7 @@ span.error-message {
 }
 
 button {
-    margin: 40px 5px;
+    /*margin: 40px 5px;*/
 }
 
 .auth-form button.outline {

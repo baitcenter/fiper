@@ -3,10 +3,14 @@
         <div class="text-left pointing-left label bg-green text-white outline">
             <h6>Trending For Year {{ current_year }}</h6>
         </div>
+        <div class="select-year-wrapper row text-center items-center justify-start">
+            <div class="select-title sm-width-2of5 auto">Compare with year(s):</div>
+            <q-select type="radio" class="green" v-model="year_select.value" :options="year_select.options"></q-select>
+        </div>
         <div class="chart-wrapper">
             <chart :chart-data="datacollection"></chart>
         </div>
-        <button class="green circular" @click="fetch_trend_data(2015)">2015</button>
+        <!-- <button class="green circular" @click="init_year_select()">2015</button> -->
     </div>
 </template>
 <script type="text/javascript">
@@ -29,10 +33,20 @@ export default {
             },
             fiper_data: {},
             tempo_data: {},
-            current_year: 'NA'
+            current_year: 'NA',
+            year_select: {
+                value: '',
+                options: []
+            },
         }
     },
     watch: {
+        '$route': {
+            handler: function(to, from) {
+                var that = this
+                that.set_date()
+            }
+        },
         'fiper_data': {
             handler: function(newVal, oldVal) {
                 var that = this
@@ -53,41 +67,98 @@ export default {
                 var that = this
                 var fiper_data = {}
                 that.$set(that, 'fiper_data', fiper_data)
-
-                console.log(newVal)
-
+                    // console.log(newVal)
                 that.fetch_trend_data(newVal)
-                // Change subtitle here
-                // Bus.$emit('receive_child_info', {
-                //     page_title: 'Trending',
-                //     page_subtitle: newVal.toString()
-                // })
+                that.init_year_select()
+            }
+        },
+        'year_select.value': {
+            handler: function(newVal, oldVal) {
+                var that = this
+                that.$set(that.fiper_data, oldVal, null)
+                delete that.fiper_data[oldVal]
+
+                console.log(that.fiper_data)
+                    // var data = that.fiper_data
+                    // that.$set(that, 'fiper_data', data)
+                console.log('old value is ' + oldVal)
+                if (newVal != '---') {
+                    that.fetch_trend_data(newVal)
+                }
+                // that.fillData()
+                console.log(that.datacollection)
             }
         }
     },
     mounted: function() {
         var that = this
+        that.set_date()
 
-        var _current_date = moment().format()
-        var current_date = new Date(_current_date)
-        var year = current_date.getFullYear()
-        that.$set(that, 'current_year', year)
-
-        Bus.$emit('receive_child_info', {
-            page_title: 'Trending',
-            page_subtitle: ''
-        })
 
     },
     methods: {
+        set_date: function() {
+            var that = this
+            var year = ''
+                // react to route changes...
+            console.log('year: ' + that.$route.params.year)
+
+            if (typeof that.$route.params.year !== 'undefined') {
+                // console.log('1st')
+                // Check conditions
+                if (that.$route.params.year < 0) {
+                    Bus.$emit('receive_child_info', {
+                        page_title: 'Trending',
+                        page_subtitle: 'Invalid year'
+                    })
+                    return false
+                }
+                year = that.$route.params.year
+                that.$set(that, 'current_year', year)
+            } else {
+                var _current_date = moment().format()
+                var current_date = new Date(_current_date)
+                var year = current_date.getFullYear()
+            }
+            that.$set(that, 'current_year', year)
+
+            Bus.$emit('receive_child_info', {
+                page_title: 'Trending',
+                page_subtitle: that.current_year.toString()
+            })
+        },
+        reset_chart_data: function() {
+            var that = this
+            var data = {}
+            that.$set(that, 'fiper_data', data)
+        },
+        init_year_select: function() {
+            var that = this
+            var current_year = that.current_year
+            var year_select = {
+                value: '---',
+                options: [{
+                    label: '---',
+                    value: '---'
+                }]
+            }
+            var year_range = {
+                from: current_year - 4,
+                to: current_year
+            }
+            for (var i = year_range.from; i < year_range.to; i++) {
+                var option = {}
+                    // if (i == current_year) continue
+                option.label = option.value = i.toString()
+                year_select.options.push(option)
+            }
+            that.$set(that, 'year_select', year_select)
+
+        },
         change_year: function(year) {
             var that = this
             that.$set(that, 'current_year', year)
             console.log(year)
-        },
-        getCurrentYear: function() {
-            var _date = new Date(moment().format())
-            return _date.getFullYear()
         },
         getMonthLabels: function() {
             var that = this
@@ -107,14 +178,14 @@ export default {
                 // Lolz, must init a full dict like this
             var datacollection = {
                     labels: that.getMonthLabels(),
-                    datasets: that.datacollection.datasets
+                    datasets: []
                 }
                 // This did trick to reactivity chart's data
             var chart_data = that.fiper_data
 
             for (var key in chart_data) {
                 // Iterate each year first
-                var color_theme = that.getCurrentYear() == key ? '#4caf50' : '#027be3'
+                var color_theme = that.current_year == key ? '#4caf50' : '#027be3'
                 var dataset = {
                     label: key,
                     data: [],
@@ -143,12 +214,15 @@ export default {
                     dataset.data.push(chart_data[key][month_key].data)
                 }
 
-                var index = Object.keys(that.fiper_data).indexOf(key) // This is equal to number of year - 1
+                var index = Object.keys(that.fiper_data).indexOf(key)
+                    // console.log(Object.keys(that.fiper_data))
+                    // console.log('index is ' + index)
                     // console.log(dataset)
                 datacollection.datasets[index] = dataset
 
             }
             that.$set(that, 'datacollection', datacollection)
+                // console.log(datacollection)
 
         },
         fetch_trend_data: function(year = null) {

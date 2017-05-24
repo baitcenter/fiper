@@ -36,7 +36,10 @@
                         <td class="text-right">{{ get_outflow_performance }} USD</td>
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>
+                        <router-link tag="button" class="green" :to="{ path: '/analysis/' + date.year + '/' + date.month, exact: true  }">See Analysis</router-link>
+                            <router-link  class="green" :to="{ path: '/trending/' + date.year, exact: true  }">See Trending</router-link>
+                        </td>
                         <td class="text-right">{{ get_total_performance }} USD</td>
                     </tr>
                 </tbody>
@@ -180,7 +183,7 @@ export default {
         Bus.$emit('receive_fiper_component', that)
         Bus.$emit('receive_child_info', {
             page_title: 'Finance Performance',
-            page_subtitle: 'today'
+            page_subtitle: 'This month'
         })
         that.set_date()
 

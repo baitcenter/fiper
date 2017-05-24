@@ -28,9 +28,11 @@ var router = new VueRouter({
                     { path: '/home/:year(\\d+)/:month(\\d+)', component: load('main/Home'), },
                     { path: '/home/:year(\\d+)/:month(\\d+)/:day(\\d+)', component: load('main/Home'), },
                     { path: '/analysis', component: load('analysis/Analysis') },
+                    { path: '/analysis/:year(\\d+)/:month(\\d+)', component: load('analysis/Analysis') },
                     { path: '/settings', component: load('main/Settings'), },
                     { path: '/about', component: load('main/About'), },
                     { path: '/trending', component: load('trending/Trend'), },
+                    { path: '/trending/:year(\\d+)', component: load('trending/Trend'), },
 
                 ]
             }, // Default
