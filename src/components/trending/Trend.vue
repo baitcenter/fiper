@@ -23,7 +23,8 @@ export default {
                 labels: [],
                 datasets: []
             },
-            fiper_data: {}
+            fiper_data: {},
+            tempo_data: {}
         }
     },
     watch: {
@@ -31,7 +32,14 @@ export default {
             handler: function(oldVal, newVal) {
                 var that = this
                 that.fillData()
-                    // console.log(that.datacollection)
+                console.log('triggered fillData')
+            },
+            deep: true
+        },
+        'tempo_data': {
+            handler: function(oldVal, newVal) {
+                var that = this
+                that.$set(that.fiper_data, that.tempo_data.year, that.tempo_data.data)
             },
             deep: true
         }
@@ -43,7 +51,7 @@ export default {
                 page_subtitle: ''
             })
             // that.fillData() 
-        // that.fetch_trend_data(2015)
+            // that.fetch_trend_data(2015)
         that.fetch_trend_data()
 
     },
@@ -90,11 +98,11 @@ export default {
                     borderDashOffset: 0.0,
                     borderJoinStyle: 'miter',
                     pointBorderColor: color_theme,
-                    pointBackgroundColor: "#fff",
+                    pointBackgroundColor: color_theme,
                     pointBorderWidth: 1,
                     pointHoverRadius: 5,
-                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBackgroundColor: color_theme,
+                    pointHoverBorderColor: color_theme,
                     pointHoverBorderWidth: 2,
                     pointRadius: 1,
                     pointHitRadius: 10,
@@ -107,7 +115,7 @@ export default {
                 }
 
                 var index = Object.keys(that.fiper_data).indexOf(key) // This is equal to number of year - 1
-                // console.log(dataset)
+                    // console.log(dataset)
                 datacollection.datasets[index] = dataset
 
             }
@@ -121,27 +129,19 @@ export default {
                 var current_date = new Date(_current_date)
                 year = current_date.getFullYear()
             }
-            console.log(year)
+            // console.log(year)
                 // console.log(that.fiper_data['"' + year + '"'])
-            if (typeof that.fiper_data['"' + year + '"'] == 'undefined') {
-                var d = {}
-                that.$set(that.fiper_data, year, d)
-            }
-            // var year_instance = that.fiper_data['"' + year + '"']
-            // console.log(year_instance)
-            for (var i = 1; i < 13; i++) {
+            that.fetch_fiper_data(year)
+                // Need watcher now
 
-                var date_data = {
-                        year: year,
-                        month: i
-                    }
-                    // Init if year instance does not exist
-                that.fetch_fiper_data(date_data)
+            // console.log(that.tempo_data)
 
-                // var year = 
-            }
-            console.log(that.fiper_data)
-                // that.fillData()
+            // if (typeof that.fiper_data['"' + year + '"'] == 'undefined') {
+            //     that.$set(that.fiper_data, year, that.tempo_data)
+            // }
+
+            // console.log(that.fiper_data)
+            // that.fillData()
 
         },
         get_total_performance: function(month_fiper_data) {
@@ -177,25 +177,33 @@ export default {
                 return 0
             }
         },
-        fetch_fiper_data: function(date = null) {
+        fetch_fiper_data: function(year) {
             var that = this
-            var fiper_data = {}
-            var fiper_empty_status = []
+            var year_data = {
+                year: year,
+                data: {}
+            }
             Database.get("fiper").then(function(fiper) {
                 // console.log(fiper.data)
-                for (var key in fiper.data) {
-                    var data = fiper.data[key].filter(function(elem) {
-                        var elem_date = new Date(elem.fiper_date)
-                        return date.month == elem_date.getMonth() + 1 && date.year == elem_date.getFullYear()
-                    })
-                    fiper_data[key] = data
+                for (var i = 1; i < 13; i++) {
+                    var fiper_data = {}
+
+                    for (var key in fiper.data) {
+                        var data = fiper.data[key].filter(function(elem) {
+                            var elem_date = new Date(elem.fiper_date)
+                            return i == elem_date.getMonth() + 1 && year == elem_date.getFullYear()
+                        })
+                        fiper_data[key] = data
+                    }
+                    // console.log(fiper_data)
+                    var month_data = {
+                        data: that.get_total_performance(fiper_data),
+                        month_name: getDateText(i)
+                    }
+                    year_data.data['month-' + i] = month_data
                 }
-                // console.log(fiper_data)
-                var month_data = {
-                    data: that.get_total_performance(fiper_data),
-                    month_name: getDateText(date.month)
-                }
-                that.$set(that.fiper_data[date.year], 'month-' + date.month, month_data)
+                that.$set(that, 'tempo_data', year_data)
+                    // return year_data
                     // console.log(that.fiper_data)
             }).catch(function(err) {
                 console.log(err)
