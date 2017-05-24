@@ -235,6 +235,8 @@ export default {
                 // react to route changes...
             console.log('month: ' + that.$route.params.month)
             console.log('year: ' + that.$route.params.year)
+            console.log('day: ' + that.$route.params.day)
+
             if (typeof that.$route.params.month !== 'undefined' && typeof that.$route.params.year !== 'undefined') {
                 // console.log('1st')
                 // Check conditions
@@ -293,12 +295,12 @@ export default {
             }
             console.log(render_data)
                 // Sort from lastest to oldest
-            // const exact_render_data = {}
-            // Object.keys(render_data).sort().reverse().forEach(function(key) {
-            //     exact_render_data[key] = render_data[key];
-            //     console.log(key)
-            // });
-            // console.log(exact_render_data)
+                // const exact_render_data = {}
+                // Object.keys(render_data).sort().reverse().forEach(function(key) {
+                //     exact_render_data[key] = render_data[key];
+                //     console.log(key)
+                // });
+                // console.log(exact_render_data)
             return render_data
         },
         startingFiper: function(instance) {
