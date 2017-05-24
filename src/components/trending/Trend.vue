@@ -1,7 +1,11 @@
 <template>
-    <div class="chart-wrapper">
-        <h5>Trending For Year 2017</h5>
-        <chart :chart-data="datacollection"></chart>
+    <div class="trend-wrapper">
+        <div class="text-left pointing-left label bg-green text-white outline">
+            <h6>Trending For Year {{ current_year }}</h6>
+        </div>
+        <div class="chart-wrapper">
+            <chart :chart-data="datacollection"></chart>
+        </div>
         <button class="green circular" @click="fetch_trend_data(2015)">2015</button>
     </div>
 </template>
@@ -24,38 +28,63 @@ export default {
                 datasets: []
             },
             fiper_data: {},
-            tempo_data: {}
+            tempo_data: {},
+            current_year: 'NA'
         }
     },
     watch: {
         'fiper_data': {
-            handler: function(oldVal, newVal) {
+            handler: function(newVal, oldVal) {
                 var that = this
                 that.fillData()
                 console.log('triggered fillData')
             },
             deep: true
         },
-        'tempo_data': {
-            handler: function(oldVal, newVal) {
+        'tempo_data': { // This watcher wil trigger fiper_data change due to fucking async processing
+            handler: function(newVal, oldVal) {
                 var that = this
                 that.$set(that.fiper_data, that.tempo_data.year, that.tempo_data.data)
             },
             deep: true
+        },
+        'current_year': { // Change current year will reset all data and fetch that year
+            handler: function(newVal, oldVal) {
+                var that = this
+                var fiper_data = {}
+                that.$set(that, 'fiper_data', fiper_data)
+
+                console.log(newVal)
+
+                that.fetch_trend_data(newVal)
+                // Change subtitle here
+                // Bus.$emit('receive_child_info', {
+                //     page_title: 'Trending',
+                //     page_subtitle: newVal.toString()
+                // })
+            }
         }
     },
     mounted: function() {
         var that = this
+
+        var _current_date = moment().format()
+        var current_date = new Date(_current_date)
+        var year = current_date.getFullYear()
+        that.$set(that, 'current_year', year)
+
         Bus.$emit('receive_child_info', {
-                page_title: 'Trending',
-                page_subtitle: ''
-            })
-            // that.fillData() 
-            // that.fetch_trend_data(2015)
-        that.fetch_trend_data()
+            page_title: 'Trending',
+            page_subtitle: ''
+        })
 
     },
     methods: {
+        change_year: function(year) {
+            var that = this
+            that.$set(that, 'current_year', year)
+            console.log(year)
+        },
         getCurrentYear: function() {
             var _date = new Date(moment().format())
             return _date.getFullYear()
@@ -129,19 +158,9 @@ export default {
                 var current_date = new Date(_current_date)
                 year = current_date.getFullYear()
             }
-            // console.log(year)
-                // console.log(that.fiper_data['"' + year + '"'])
             that.fetch_fiper_data(year)
                 // Need watcher now
 
-            // console.log(that.tempo_data)
-
-            // if (typeof that.fiper_data['"' + year + '"'] == 'undefined') {
-            //     that.$set(that.fiper_data, year, that.tempo_data)
-            // }
-
-            // console.log(that.fiper_data)
-            // that.fillData()
 
         },
         get_total_performance: function(month_fiper_data) {

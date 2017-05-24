@@ -23,7 +23,7 @@
         <div v-if="!empty_fiper" class="performance-wrapper full-width auto">
             <table class="q-table highlight loose full-width auto text-left">
                 <thead>
-                    <div class="text-left pointing-left label bg-green text-white">
+                    <div class="text-left pointing-left label bg-green outline">
                         <h6>Overview</h6></div>
                 </thead>
                 <tbody>
@@ -42,11 +42,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="date-fiper-wrapper" v-for="(data,day) in render_fiper_data" :id="'day-' + day">
-            <div class="text-left pointing-left label bg-green text-white">
+        <div class="date-fiper-wrapper" v-for="day in Object.keys(render_fiper_data).reverse()" :id="'day-' + day">
+            <div class="text-left pointing-left label bg-green outline">
                 <h6>{{ get_date_string(day) }}</h6>
             </div>
-            <div v-for="(fiper_value,fiper_key) in data" class="full-width fiper-wrapper" :id="'fiper-' + fiper_key">
+            <div v-for="(fiper_value,fiper_key) in render_fiper_data[day]" class="full-width fiper-wrapper" :id="'fiper-' + fiper_key">
                 <div v-for="(value,index) in fiper_value" class="card flex items-center wrap justify-start">
                     <!-- <div class="row full-width auto">
                         <div class="tag label bg-green text-white float-left"> {{ fiper_root_type[fiper_key].text }}

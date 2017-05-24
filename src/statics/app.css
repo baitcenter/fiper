@@ -1,4 +1,15 @@
 /* Created by khangtd */
+.label.outline{
+    border: 1px solid #4caf50;
+    color: #4caf50!important;
+    background: transparent!important;
+}
+.trend-wrapper{
+    padding-top: 30px;
+}
+.chart-wrapper{
+    padding: 10px;
+}
 .performance-wrapper{
     margin-top: 30px;
 }
