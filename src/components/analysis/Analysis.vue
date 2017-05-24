@@ -1,12 +1,9 @@
 <template>
-    <div class="chart-wrapper">
-        <h1>Analysis Page</h1>
-        <chart></chart>
-    </div>
+    <div>This is analysis page</div>
 </template>
-<script type="text/javascript">
+<script>
 import Bus from 'settings/event-bus'
-import Chart from './Chart'
+
 export default {
     mounted: function() {
         Bus.$emit('receive_child_info', {
@@ -14,9 +11,10 @@ export default {
             page_subtitle: ''
         })
     },
-    components: {
-        Chart
+    data: function() {
+        return {}
     }
 }
 </script>
-<style type="text/css"></style>
+<style>
+</style>

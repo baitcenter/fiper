@@ -13,9 +13,7 @@
             <button v-if="fiper_component != null" class="green big" @click="fiper_component.$refs.fiperModal.open()">
                 <i>note_add</i>
             </button>
-        
         </div>
-    
         <!-- Left-side Drawer -->
         <q-drawer ref="leftDrawer">
             <div class="toolbar hide-on-drawer-visible green">
@@ -27,6 +25,9 @@
             <div class="list no-border platform-delimiter">
                 <q-drawer-link icon="home" :to="{path: '/home', exact: true}">
                     Home
+                </q-drawer-link>
+                <q-drawer-link icon="trending_up" :to="{path: '/trending', exact: true}">
+                    Trending
                 </q-drawer-link>
                 <q-drawer-link icon="developer_board" :to="{path: '/analysis', exact: true}">
                     Analysis
@@ -70,11 +71,11 @@ export default {
 
     },
     methods: {
-        
+
     },
     created: function() {
         var that = this
-        // Router.push('/home')
+            // Router.push('/home')
         Bus.$on('receive_child_info', function(data) {
             console.log('receive child info')
             that.$set(that, 'child_info', data)

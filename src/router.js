@@ -29,6 +29,8 @@ var router = new VueRouter({
                     { path: '/analysis', component: load('analysis/Analysis') },
                     { path: '/settings', component: load('main/Settings'), },
                     { path: '/about', component: load('main/About'), },
+                    { path: '/trending', component: load('trending/Trend'), },
+
                 ]
             }, // Default
             {
