@@ -25,7 +25,7 @@
             <div class="list no-border platform-delimiter">
                 <div class="list-label">Navigations</div>
                 <button class="green full-width" @click="openDateModal()">
-                    <i>home</i> Jump To Date
+                    <i class="material-icons">date_range</i>  Jump To Date
                 </button>
                 <div class="list-label">Main Menu</div>
                 <q-drawer-link icon="home" :to="{path: '/home' , exact: true}">
