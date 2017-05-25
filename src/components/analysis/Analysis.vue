@@ -1,5 +1,9 @@
 <template>
-    <div>This is analysis page</div>
+    <div class="analysis-wrapper">
+        <div class="text-left pointing-left label bg-green text-white outline">
+            <h6>Analysis For {{ display_date }}</h6>
+        </div>
+    </div>
 </template>
 <script>
 import Bus from 'settings/event-bus'
@@ -14,6 +18,12 @@ export default {
         var that = this
         that.set_date()
     },
+    computed: {
+        display_date: function() {
+            var that = this
+            return that.date.month + '/' + that.date.year
+        }
+    },
     methods: {
         set_date: function() {
             var that = this
@@ -27,7 +37,7 @@ export default {
                 // Check conditions
                 if ((that.$route.params.month < 1 || that.$route.params.month > 12) || (that.$route.params.year < 0)) {
                     Bus.$emit('receive_child_info', {
-                        page_title: 'Finance Performance',
+                        page_title: 'Analysis',
                         page_subtitle: 'Invalid month or year'
                     })
                     return false
@@ -51,7 +61,7 @@ export default {
                 that.$set(that, 'date', data)
             }
             Bus.$emit('receive_child_info', {
-                page_title: 'Finance Performance',
+                page_title: 'Analysis',
                 page_subtitle: typeof that.date.current !== 'undefined' ? 'This Month' : that.date.month + '/' + that.date.year
             })
             console.log(that.date)
