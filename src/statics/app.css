@@ -1,8 +1,24 @@
 /* Created by khangtd */
+.forking-action img{
+    width: 50px;
+    height: auto;
+}
+.about-action {
+    margin-top: 20px;
+}
+.about-action button:first-child {
+    /*margin-right:20px;*/
+}
+.about-form-wrapper{
+    padding-top: 20px;
+    padding-bottom: 20px
+}
 .date-wrapper{
     margin-top: 30px;
 }
-
+/*.about-form-content {
+    padding: 0.8rem;
+}*/
 .day-performance > span > span {
     padding: 3px;
 }

@@ -2,11 +2,7 @@
     <div class="fluid-wrapper flex justify-center">
         <div class="auth-form row inline auto items-center justify-center self-center">
             <div class="form-wrapper row auto wrap justify-center">
-                <!-- <div class="row justify-center text-center">
-                    <div class="auth-form-logo sm-width-3of3">
-                        <img src="../../assets/logo.png">
-                    </div>
-                </div> -->
+        
                 <div class="row wrap width-2of5 justify-center text-center">
                     <div class="auth-form-logo sm-width-3of3">
                         <img src="~statics/logo_text.png">
@@ -16,10 +12,7 @@
                     <div class="greeting-wrapper row full-width rotateInDownLeft animated">
                         <span class="greeting label pointing-down text-white">explore your FIPER</span>
                     </div>
-                    <!--  <div class="floating-label large-gutter">
-                        <input required class="full-width" v-model="username">
-                        <label>Username</label>
-                    </div> -->
+                   
                     <div class="floating-label large-gutter">
                         <input type="password" required v-bind:class="{'has-error': $v.pin_code.$error}" v-on:input="$v.pin_code.$touch" class="full-width validate" v-model.number="pin_code">
                         <label>PIN CODE</label>

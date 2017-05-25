@@ -8,14 +8,14 @@
                 <h6>INCOME</h6>
             </div>
             <chart :chart-data="income_chart_data"></chart>
-            <h6 class="text-center">Analysis for {{ display_date }} </h6>
+            <h6 class="text-center">Total income:  {{ get_inflow_performance(fiper_data) }} USD </h6>
         </div>
         <div v-if="display_options.enable_outcome" class="chart-wrapper">
             <div class="text-left ">
                 <h6>OUTCOME</h6>
             </div>
             <chart :chart-data="outcome_chart_data"></chart>
-            <h6 class="text-center">Analysis for {{ display_date }} </h6>
+            <h6 class="text-center">Total outcome:  {{ get_outflow_performance(fiper_data) }} USD</h6>
         </div>
         <div class="text-center" v-if="!display_options.enable_outcome && !display_options.enable_income">
             <h3>Empty Data</h3>
@@ -94,7 +94,7 @@ export default {
         that.set_date()
         that.fetch_category_data()
         Bus.$on('change_date', function() {
-            console.log('date changed')
+                console.log('date changed')
                 that.set_date()
             })
             // Bus.$on()
@@ -109,6 +109,34 @@ export default {
         }
     },
     methods: {
+        get_inflow_performance: function(fiper_dict) {
+            var that = this
+            try {
+                var inflow = fiper_dict.income.reduce(function(prevValue, elem) {
+                    return prevValue + elem.fiper_amount
+                }, 0)
+
+            } catch (err) {
+                var inflow = 0
+            }
+
+            return inflow
+
+        },
+        get_outflow_performance: function(fiper_dict) {
+            var that = this
+            try {
+                var outflow = fiper_dict.outcome.reduce(function(prevValue, elem) {
+                    return prevValue + elem.fiper_amount
+                }, 0)
+
+            } catch (err) {
+                var outflow = 0
+            }
+
+            return outflow
+
+        },
         fetch_category_data: function() {
             var that = this
             Database.get('fiper_category').then(function(res) {
@@ -131,6 +159,9 @@ export default {
             var original_data = that.fiper_data
             for (var key in original_data) {
                 if (original_data[key].length == 0) {
+                    continue
+                }
+                if (key == 'debts_and_loans') {
                     continue
                 }
 
@@ -160,10 +191,16 @@ export default {
                         return prevValue + elem.fiper_amount
                     }, 0)
                     dataset.data.push(performance)
-                    var category = that.get_category_by_slug(key, fiper_type)
+                    if (fiper_type == 'loan' || fiper_type == 'debt') {
+                        var category = that.get_category_by_slug('debts_and_loans', fiper_type)
+                    } else {
+                        var category = that.get_category_by_slug(key, fiper_type)
+                    }
+                    console.log('category here')
+                    console.log(category)
                     if (category.length > 0) {
                         dataset.backgroundColor.push(category[0].color)
-                        console.log(category[0].color)
+                            // console.log(category[0].color)
                     } else {
                         dataset.backgroundColor.push('#4caf50')
                     }
@@ -181,14 +218,29 @@ export default {
             Database.get("fiper").then(function(fiper) {
                 // console.log(fiper.data)
                 var fiper_data = {}
-
                 for (var key in fiper.data) {
                     var data = fiper.data[key].filter(function(elem) {
                         var elem_date = new Date(elem.fiper_date)
                         return date.month == elem_date.getMonth() + 1 && date.year == elem_date.getFullYear()
                     })
                     fiper_data[key] = data
+                    if (key == 'debts_and_loans') {
+                        console.log('process here')
+                        var debt_fipers = data.filter(function(elem) {
+                                return elem.fiper_type == 'debt'
+                            }).slice() // Clone to new array
+                        console.log(debt_fipers)
+                        var loan_fipers = data.filter(function(elem) {
+                                return elem.fiper_type == 'loan'
+                            }).slice() // Clone to new array
+                        console.log(loan_fipers)
+
+                        fiper_data['income'] = fiper_data['income'].concat(debt_fipers)
+                        fiper_data['outcome'] = fiper_data['outcome'].concat(loan_fipers)
+                            // delete fiper_data['debts_and_loans']
+                    }
                 }
+                console.log(fiper_data)
                 console.log('fetch_fiper_data')
 
                 that.$set(that, 'fiper_data', fiper_data)
