@@ -26,7 +26,7 @@
                     <h6>Overview</h6>
                 </div>
                 <div class="sm-width-2of3 auto text-right performance-trending-btn">
-                    <router-link tag="button" class="primary outline" :to="{ path: '/analysis/' + date.year + '/' + date.month, exact: true  }"><i>developer_board</i> Analyse</router-link>
+                    <router-link tag="button" class="primary outline" :to="{ path: '/analysis', exact: true  }"><i>developer_board</i> Analyse</router-link>
                 </div>
             </div>
             <table class="q-table highlight loose full-width auto text-left">
@@ -41,7 +41,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <router-link class="green" :to="{ path: '/trending/' + date.year, exact: true  }">See Trending</router-link>
+                            <router-link class="green" :to="{ path: '/trending', exact: true  }">See Trending</router-link>
                         </td>
                         <td class="text-right">{{ get_total_performance(fiper_data) }} USD</td>
                     </tr>
