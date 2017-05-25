@@ -122,6 +122,10 @@ export default {
                 }
             }
             that.$set(that, 'current_year', data.year)
+                Bus.$emit('receive_child_info', {
+                page_title: 'Trending',
+                page_subtitle: that.date.month + '/' + that.date.year
+            })
         },
         set_date_v2: function() {
             var that = this

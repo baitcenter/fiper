@@ -1,4 +1,7 @@
 /* Created by khangtd */
+.date-wrapper{
+    margin-top: 30px;
+}
 
 .day-performance > span > span {
     padding: 3px;
@@ -10,7 +13,7 @@
 
 .performance-trending-btn {
     padding-right: 0.8rem;
-    /*margin-top: 0.8rem;*/
+    margin-top: 1.8rem;
 }
 
 .analysis-wrapper {

@@ -25,7 +25,7 @@
             <div class="list no-border platform-delimiter">
                 <div class="list-label">Navigations</div>
                 <button class="green full-width" @click="openDateModal()">
-                    <i class="material-icons">date_range</i>  Jump To Date
+                    <i class="material-icons">date_range</i> Jump To Date
                 </button>
                 <div class="list-label">Main Menu</div>
                 <q-drawer-link icon="home" :to="{path: '/home' , exact: true}">
@@ -37,9 +37,9 @@
                 <q-drawer-link icon="developer_board" :to="{path: '/analysis' , exact: true}">
                     Analysis
                 </q-drawer-link>
-                <q-drawer-link icon="build" :to="{path: '/settings', exact: true}">
+                <!-- <q-drawer-link icon="build" :to="{path: '/settings', exact: true}">
                     Settings
-                </q-drawer-link>
+                </q-drawer-link> -->
                 <q-drawer-link icon="cached" :to="{path: '/pinreset', exact: true}">
                     Reset PIN
                 </q-drawer-link>
@@ -52,10 +52,12 @@
             </div>
         </q-drawer>
         <q-modal ref="dateModal" class="minimized" :content-css="{padding: '50px'}">
-            <h4>Select date to jump</h4>
+            <h6>Select date to jump</h6>
             <!-- Only Date -->
-            <q-datetime v-model="date_value" type="date" class="sm-full-width"></q-datetime>
-            <button class="green" @click="submitDate()">Submit</button>
+            <div class="date-wrapper">
+                <q-datetime v-model="date_value" type="date" class="sm-full-width"></q-datetime>
+                <button class="green" @click="submitDate()">Submit</button>
+            </div>
         </q-modal>
         <router-view class="layout-view"></router-view>
     </q-layout>
@@ -105,8 +107,8 @@ export default {
                 year: date.getFullYear().toString()
             }
             LocalStorage.set('current_date', data)
-            // window.location.reload()
-            // Router.push(that.$route.path)
+                // window.location.reload()
+                // Router.push(that.$route.path)
             console.log(that.$route.path)
             Bus.$emit('change_date')
         },

@@ -25,9 +25,6 @@
                 <div class="text-left pointing-left label sm-width-1of3 auto bg-green text-white">
                     <h6>Overview</h6>
                 </div>
-                <div class="sm-width-2of3 auto text-right performance-trending-btn">
-                    <router-link tag="button" class="primary outline" :to="{ path: '/analysis', exact: true  }"><i>developer_board</i> Analyse</router-link>
-                </div>
             </div>
             <table class="q-table highlight loose full-width auto text-left">
                 <tbody>
@@ -47,6 +44,9 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="sm-width-2of3 auto text-center performance-trending-btn">
+                <router-link tag="button" class="primary outline" :to="{ path: '/analysis', exact: true  }"><i>developer_board</i> Analyse</router-link>
+            </div>
         </div>
         <div class="date-fiper-wrapper" v-for="day in Object.keys(render_fiper_data).reverse()" :id="'day-' + day">
             <div class="row items-center justify-stretch">
