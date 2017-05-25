@@ -124,7 +124,8 @@ import Success from 'components/alert/Success'
 import Bus from 'settings/event-bus'
 import moment from 'moment'
 import {
-    Utils
+    Utils,
+    LocalStorage
 } from 'quasar'
 
 // TODO: use drag and drop
@@ -167,8 +168,8 @@ export default {
     watch: {
         '$route': {
             handler(to, from) {
-
                 var that = this
+                console.log('start date')
                 that.set_date()
             }
         },
@@ -182,6 +183,8 @@ export default {
     },
     beforeDestroy: function() {
         Bus.$emit('destroy_fiper_component')
+        Bus.$off('change_date')
+
     },
     created: function() {
         var that = this
@@ -198,7 +201,10 @@ export default {
     },
     mounted: function() {
         var that = this
-
+        Bus.$on('change_date', function() {
+            console.log('date changed')
+            that.set_date()
+        })
     },
     computed: {
 
@@ -266,6 +272,30 @@ export default {
         },
         set_date: function() {
             var that = this
+            var data = {}
+            var _data = LocalStorage.get.item('current_date')
+            if (_data != null) {
+                console.log('current_date is not null')
+                data.month = _data.month
+                data.year = _data.year
+            } else {
+                var _date = moment().format()
+                var date = new Date(_date)
+                data = {
+                    month: date.getMonth() + 1,
+                    year: date.getFullYear(),
+                }
+            }
+            that.$set(that, 'date', data)
+
+            Bus.$emit('receive_child_info', {
+                page_title: 'Finance Performance',
+                page_subtitle: that.date.month + '/' + that.date.year
+            })
+            console.log(that.date)
+        },
+        set_date_v2: function() {
+            var that = this
                 // react to route changes...
             console.log('month: ' + that.$route.params.month)
             console.log('year: ' + that.$route.params.year)
@@ -301,7 +331,7 @@ export default {
             }
             Bus.$emit('receive_child_info', {
                     page_title: 'Finance Performance',
-                    page_subtitle: typeof that.date.current !== 'undefined' ? 'This Month' : that.date.month + '/' + that.date.year
+                    page_subtitle: that.date.month + '/' + that.date.year
                 })
                 // console.log(that.date)
         },
@@ -572,7 +602,7 @@ export default {
                 Database.get("fiper").then(function(fiper) {
                     data.fiper_uid = Utils.uid()
                     console.log(fiper.data)
-                    // console.log(data.fiper_root_type)
+                        // console.log(data.fiper_root_type)
                     fiper.data[data.fiper_root_type].push(data)
                     return Database.put(fiper).then(function(new_fiper) {
 

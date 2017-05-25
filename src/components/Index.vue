@@ -28,13 +28,13 @@
                     <i>home</i> Jump To Date
                 </button>
                 <div class="list-label">Main Menu</div>
-                <q-drawer-link icon="home" :to="{path: '/home/' + date.year + '/' + date.month, exact: true}">
+                <q-drawer-link icon="home" :to="{path: '/home' , exact: true}">
                     Home
                 </q-drawer-link>
-                <q-drawer-link icon="trending_up" :to="{path: '/trending/' + date.year , exact: true}">
+                <q-drawer-link icon="trending_up" :to="{path: '/trending', exact: true}">
                     Trending
                 </q-drawer-link>
-                <q-drawer-link icon="developer_board" :to="{path: '/analysis/' + date.year + '/' + date.month, exact: true}">
+                <q-drawer-link icon="developer_board" :to="{path: '/analysis' , exact: true}">
                     Analysis
                 </q-drawer-link>
                 <q-drawer-link icon="build" :to="{path: '/settings', exact: true}">
@@ -68,6 +68,11 @@ import moment from 'moment'
 import Router from '../router'
 import Database from 'settings/database'
 import Bus from 'settings/event-bus'
+import {
+    LocalStorage,
+    SessionStorage
+} from 'quasar'
+
 export default {
     data: function() {
         return {
@@ -82,15 +87,7 @@ export default {
         }
     },
     watch: {
-        '$route': {
-            handler: function(to, from) {
-                var that = this
-                that.set_date()
-                console.log(to)
-                if (that.$route.path == ('/' + that.date.year + '/' + that.date.month))
-                    Router.push('/home' + that.$route.path)
-            }
-        }
+
     },
     computed: {
 
@@ -101,11 +98,17 @@ export default {
             var date = new Date(that.date_value)
             console.log(date.getFullYear())
             console.log(date.getMonth() + 1)
-
             that.$refs.dateModal.close()
             that.$refs.mainMenu.close()
-            console.log('starting push')
-            Router.push('/' + date.getFullYear().toString() + '/' + (date.getMonth() + 1).toString())
+            var data = {
+                month: (date.getMonth() + 1).toString(),
+                year: date.getFullYear().toString()
+            }
+            LocalStorage.set('current_date', data)
+            // window.location.reload()
+            // Router.push(that.$route.path)
+            console.log(that.$route.path)
+            Bus.$emit('change_date')
         },
         openDateModal: function() {
             var that = this
@@ -114,37 +117,21 @@ export default {
         },
         set_date: function() {
             var that = this
-                // react to route changes...
-            console.log('month: ' + that.$route.params.month)
-            console.log('year: ' + that.$route.params.year)
-            console.log('day: ' + that.$route.params.day)
-
-            if (typeof that.$route.params.month !== 'undefined' && typeof that.$route.params.year !== 'undefined') {
-                // console.log('1st')
-                // Check conditions
-                if (!((that.$route.params.month < 1 || that.$route.params.month > 12) || (that.$route.params.year < 0))) {
-
-
-                    var data = {
-                            year: that.$route.params.year,
-                            month: that.$route.params.month
-                        }
-                        // console.log(data)
-                    that.$set(that, 'date', data)
-                }
-
+            var data = {}
+            var _data = LocalStorage.get.item('current_date')
+            if (_data != null) {
+                console.log('current_date is not null')
+                data.month = _data.month
+                data.year = _data.year
             } else {
-                console.log('here')
                 var _date = moment().format()
                 var date = new Date(_date)
-                var data = {
-                        month: date.getMonth() + 1,
-                        year: date.getFullYear(),
-                        current: true
-                    }
-                    // console.log(data)
-                that.$set(that, 'date', data)
+                data = {
+                    month: date.getMonth() + 1,
+                    year: date.getFullYear(),
+                }
             }
+            that.$set(that, 'date', data)
 
             console.log(that.date)
         },
@@ -165,14 +152,12 @@ export default {
         })
 
         that.set_date()
-        console.log('receive push')
-        if (that.$route.path == ('/' + that.date.year + '/' + that.date.month))
-            Router.push('/home' + that.$route.path)
     },
     beforeDestroy() {
         Bus.$off('receive_fiper_component')
         Bus.$off('destroy_fiper_component')
         Bus.$off('receive_child_info')
+        LocalStorage.remove('current_date')
     },
     components: {
 

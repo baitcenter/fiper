@@ -23,7 +23,9 @@ import {
     getDateText
 } from 'settings/utils'
 import moment from 'moment'
-
+import {
+    LocalStorage
+} from 'quasar'
 export default {
     data: function() {
         return {
@@ -94,10 +96,34 @@ export default {
         var that = this
         that.set_date()
 
-
+        Bus.$on('change_date',function(){
+            console.log('date changed')
+            that.set_date()
+        })
+    },
+    beforeDestroy: function(){
+        Bus.$off('change_date')
     },
     methods: {
         set_date: function() {
+            var that = this
+            var data = {}
+            var _data = LocalStorage.get.item('current_date')
+            if (_data != null) {
+                console.log('current_date is null')
+                data.month = _data.month
+                data.year = _data.year
+            } else {
+                var _date = moment().format()
+                var date = new Date(_date)
+                data = {
+                    month: date.getMonth() + 1,
+                    year: date.getFullYear(),
+                }
+            }
+            that.$set(that, 'current_year', data.year)
+        },
+        set_date_v2: function() {
             var that = this
             var year = ''
                 // react to route changes...
