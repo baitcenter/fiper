@@ -14,7 +14,7 @@
 }
 
 .analysis-wrapper {
-    margin-top: 30px;
+    padding-top: 30px;
 }
 
 .select-title {
@@ -40,7 +40,13 @@
 .chart-wrapper {
     padding: 10px;
 }
-
+.analysis-wrapper .chart-wrapper {
+    padding: 10px;
+    padding-top: 0px;
+}
+.analysis-wrapper .chart-wrapper{
+    margin-bottom: 30px
+}
 .performance-wrapper {
     margin-top: 30px;
 }
@@ -145,8 +151,8 @@ span.error-message {
     font-size: 13px;
 }
 
-button {
-    /*margin: 40px 5px;*/
+.auth-form button {
+    margin: 40px 5px;
 }
 
 .auth-form button.outline {

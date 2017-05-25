@@ -21,6 +21,21 @@ var router = new VueRouter({
          * build publicPath back to '' so Cordova builds work again.
          */
         routes: [{
+                path: '/:year(\\d+)/:month(\\d+)',
+                component: load('Index'),
+                children: [
+                    { path: '/home', component: load('main/Home'), },
+                    { path: '/home/:year(\\d+)/:month(\\d+)', component: load('main/Home'), },
+                    { path: '/home/:year(\\d+)/:month(\\d+)/:day(\\d+)', component: load('main/Home'), },
+                    { path: '/analysis', component: load('analysis/Analysis') },
+                    { path: '/analysis/:year(\\d+)/:month(\\d+)', component: load('analysis/Analysis') },
+                    { path: '/settings', component: load('main/Settings'), },
+                    { path: '/about', component: load('main/About'), },
+                    { path: '/trending', component: load('trending/Trend'), },
+                    { path: '/trending/:year(\\d+)', component: load('trending/Trend'), },
+                ]
+            }, // Default
+            {
                 path: '/',
                 component: load('Index'),
                 children: [

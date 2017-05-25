@@ -545,10 +545,8 @@ export default {
                     console.log(fiper.data[data.fiper_root_type][index])
 
                     return Database.put(fiper).then(function(updated_fiper) {
-
                             console.log('update ' + updated_fiper.id + ' successfully')
                             console.log(updated_fiper)
-
                             that.fetch_fiper_data() // Fetching again
 
                         }).catch(function(err) {
@@ -574,7 +572,7 @@ export default {
                 Database.get("fiper").then(function(fiper) {
                     data.fiper_uid = Utils.uid()
                     console.log(fiper.data)
-
+                    // console.log(data.fiper_root_type)
                     fiper.data[data.fiper_root_type].push(data)
                     return Database.put(fiper).then(function(new_fiper) {
 

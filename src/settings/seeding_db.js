@@ -29,76 +29,98 @@ Database.get("first_login").then(function(doc) {
 var data = {
     outcome: [{
         label: 'Bills & Utilities',
-        value: 'bills_and_utilities'
+        value: 'bills_and_utilities',
+        color: '#ffffff'
     }, {
         label: 'Education',
-        value: 'education'
+        value: 'education',
+        color: '#45b39c'
     }, {
         label: 'Entertainment',
-        value: 'entertainment'
+        value: 'entertainment',
+        color: '#2ca5d5'
     }, {
         label: 'Family',
-        value: 'family'
+        value: 'family',
+        color: '#e5905e'
     }, {
         label: 'Fees and Charges',
-        value: 'fee_and_charge' 
+        value: 'fee_and_charge',
+        color: '#dab33a'
     }, {
         label: 'Food and Beverage',
-        value: 'food_and_bev'
+        value: 'food_and_bev',
+        color: '#ef4e4f'
     }, {
         label: 'Friends and Lover',
-        value: 'friends_and_lovers'
+        value: 'friends_and_lovers',
+        color: '#ef4e4f'
     }, {
         label: 'Gifts and Donations',
-        value: 'gifts_and_donations'
+        value: 'gifts_and_donations',
+        color: '#334d5c'
     }, {
         label: 'Health and Fitness',
-        value: 'health_and_fitness'
+        value: 'health_and_fitness',
+        color: '#df5b4a'
     }, {
         label: 'Insurances',
-        value: 'insurances'
+        value: 'insurances',
+        color: '#ffefbd'
     }, {
         label: 'Investment',
-        value: 'investment'
+        value: 'investment',
+        color: '#edc54b'
     }, {
         label: 'Shopping',
-        value: 'shopping'
+        value: 'shopping',
+        color: '#364e5c'
     }, {
         label: 'Transportation',
-        value: 'transportation'
+        value: 'transportation',
+        color: '#37917f'
     }, {
         label: 'Travel',
-        value: 'travel'
+        value: 'travel',
+        color: '#db783c'
     }, ],
     income: [{
         label: 'Award',
-        value: 'award'
+        value: 'award',
+        color:'#efc84a'
     }, {
         label: 'Gifts',
-        value: 'gifts'
+        value: 'gifts',
+        color: '#128f79'
     }, {
         label: 'Invest Money',
-        value: 'invest_money'
+        value: 'invest_money',
+        color: '#e07b40'
     }, {
         label: 'Others',
-        value: 'others'
+        value: 'others',
+        color: '#dab33a'
     }, {
         label: 'Salary',
-        value: 'salary'
+        value: 'salary',
+        color: '#009f83'
     }, {
         label: 'Selling',
-        value: 'selling'
+        value: 'selling',
+        color: '#00b0ea'
     }, ],
     debts_and_loans: [{
         label: 'Debt',
-        value: 'debt'
+        value: 'debt',
+        color: '#e1f8ff'
     }, {
         label: 'Loan',
-        value: 'loan'
+        value: 'loan',
+        color: '#fdc5c6'
     }, ]
 }
 console.log(data)
-// Setup PIN CODE for the first time
+    // Setup PIN CODE for the first time
 Database.get("fiper_category").then(function(doc) {
     // console.log(doc)
     console.log('already had')
@@ -130,9 +152,9 @@ Database.get("fiper").then(function(doc) {
         return Database.put({
             _id: "fiper",
             data: {
-                income: {},
-                outcome: {},
-                debts_and_loans: {}
+                income: [],
+                outcome: [],
+                debts_and_loans: []
             }
         }).then(function(res) {
             console.log("Updated " + res.toString() + ', redirect to home')
