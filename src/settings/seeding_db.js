@@ -30,7 +30,7 @@ var data = {
     outcome: [{
         label: 'Bills & Utilities',
         value: 'bills_and_utilities',
-        color: '#ffffff'
+        color: '#f3f3f3'
     }, {
         label: 'Education',
         value: 'education',
