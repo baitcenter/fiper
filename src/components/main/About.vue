@@ -30,7 +30,7 @@
                         </div>
                         <div class="about-action row wrap items-center justify-center">
                             <router-link tag="button" class="green" :to="'/'">Go Home</router-link>
-                            <button class="forking-action" >
+                            <button class="forking-action" @click="redirectToGithub">
                                 <img src="~statics/github.png">
                             </button>
                         </div>
@@ -42,13 +42,18 @@
 </template>
 <script type="text/javascript">
 import Bus from 'settings/event-bus'
-
+import { Utils } from 'quasar'
 export default {
     mounted: function() {
         Bus.$emit('receive_child_info', {
             page_title: 'About',
             page_subtitle: ''
         })
+    },
+    methods:{
+    	redirectToGithub: function(){
+    		Utils.openURL('https://github.com/TranDinhKhang/fiper')
+    	}
     }
 }
 </script>

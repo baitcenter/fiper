@@ -96,12 +96,12 @@ export default {
         var that = this
         that.set_date()
 
-        Bus.$on('change_date',function(){
+        Bus.$on('change_date', function() {
             console.log('date changed')
             that.set_date()
         })
     },
-    beforeDestroy: function(){
+    beforeDestroy: function() {
         Bus.$off('change_date')
     },
     methods: {
@@ -122,9 +122,9 @@ export default {
                 }
             }
             that.$set(that, 'current_year', data.year)
-                Bus.$emit('receive_child_info', {
+            Bus.$emit('receive_child_info', {
                 page_title: 'Trending',
-                page_subtitle: that.current_year
+                page_subtitle: that.current_year.toString()
             })
         },
         set_date_v2: function() {
