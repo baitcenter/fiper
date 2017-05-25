@@ -29,6 +29,9 @@ import Chart from './Chart'
 import {
     Database
 } from 'settings/settings'
+import {
+    LocalStorage
+} from 'quasar'
 export default {
     data: function() {
         return {
@@ -90,7 +93,14 @@ export default {
         var that = this
         that.set_date()
         that.fetch_category_data()
-        // Bus.$on()
+        Bus.$on('change_date', function() {
+            console.log('date changed')
+                that.set_date()
+            })
+            // Bus.$on()
+    },
+    beforeDestroy: function() {
+        Bus.$off('change_date')
     },
     computed: {
         display_date: function() {
@@ -194,6 +204,30 @@ export default {
             })
         },
         set_date: function() {
+            var that = this
+            var data = {}
+            var _data = LocalStorage.get.item('current_date')
+            if (LocalStorage.get.item('current_date') != null) {
+                console.log('current_date is not null')
+                data.month = _data.month
+                data.year = _data.year
+            } else {
+                var _date = moment().format()
+                var date = new Date(_date)
+                data = {
+                    month: date.getMonth() + 1,
+                    year: date.getFullYear(),
+                }
+            }
+            that.$set(that, 'date', data)
+
+            Bus.$emit('receive_child_info', {
+                page_title: 'Analysis',
+                page_subtitle: that.date.month + '/' + that.date.year
+            })
+            console.log(that.date)
+        },
+        set_date_v2: function() {
             var that = this
                 // react to route changes...
             console.log('month: ' + that.$route.params.month)
