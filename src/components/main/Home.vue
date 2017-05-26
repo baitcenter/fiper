@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                             <div class="row full-width auto items-center fiper-extra-info">
-                                <div class="float-left auto">{{ value.fiper_type_name }}</div>
+                                <div class="float-left auto">{{ get_fiper_date(value) }}</div>
                                 <div class="fiper-root-type chip label bg-green text-white float-right">
                                     <!-- {{ value.fiper_type_name }}  -->
                                     {{ fiper_root_type[fiper_key].text }}
