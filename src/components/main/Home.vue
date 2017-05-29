@@ -177,6 +177,7 @@ export default {
             handler(oldVal, newVal) {
                 var that = this
                 that.fetch_fiper_data()
+
             },
             deep: true
         }
@@ -276,14 +277,15 @@ export default {
             var _data = LocalStorage.get.item('current_date')
             if (_data != null) {
                 console.log('current_date is not null')
-                data.month = _data.month
-                data.year = _data.year
+                data = _data
             } else {
                 var _date = moment().format()
                 var date = new Date(_date)
                 data = {
                     month: date.getMonth() + 1,
                     year: date.getFullYear(),
+                    day: date.getDate(),
+                    date_text: date.toISOString()
                 }
             }
             that.$set(that, 'date', data)

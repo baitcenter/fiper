@@ -79,7 +79,8 @@
 import moment from 'moment'
 import Database from 'settings/database'
 import $ from "jquery";
-
+import Bus from 'settings/event-bus'
+import { LocalStorage } from 'quasar'
 export default {
     methods: {
         restoreSearchData: function() {
@@ -140,7 +141,7 @@ export default {
             var data = {
                 fiper_uid: "",
                 fiper_type: "---",
-                fiper_date: moment().format(),
+                fiper_date: that.current_date.date_text,
                 fiper_name: "",
                 fiper_des: "",
                 fiper_amount: 0,
@@ -155,7 +156,29 @@ export default {
             return that.fiper_type.filter(function(elem) {
                 return elem.value == value
             })
-        }
+        },
+        set_date: function() {
+            var that = this
+            var data = {}
+            var _data = LocalStorage.get.item('current_date')
+            if (_data != null) {
+                console.log('current_date is not null')
+                data = _data
+            } else {
+                var _date = moment().format()
+                var date = new Date(_date)
+                data = {
+                    month: date.getMonth() + 1,
+                    year: date.getFullYear(),
+                    day: date.getDate(),
+                    date_text: date.toISOString()
+                }
+            }
+            that.$set(that, 'current_date', data)
+
+
+            console.log(that.date)
+        },
     },
     watch: {
         'current_tab': {
@@ -187,6 +210,13 @@ export default {
                 that.$emit('set_tempo_fiper_data', newVal)
             },
             deep: true
+        },
+        'current_date': {
+            handler: function(newVal, oldVal) {
+                var that = this
+                that.$set(that.form, 'fiper_date', that.current_date.date_text)
+            },
+            deep: true
         }
     },
     data: function() {
@@ -213,8 +243,12 @@ export default {
 
                 }
             },
-            current_tab: ''
+            current_tab: '',
+            current_date: ''
         }
+    },
+    beforeDestroy: function() {
+        Bus.$off('fiper_init_date')
     },
     mounted: function() {
 
@@ -223,6 +257,10 @@ export default {
         console.log(that)
         that.$emit('starting-stage', that)
         that.$emit('set_tempo_fiper_data', that.form)
+        Bus.$on('change_date', function() {
+            console.log('date changed')
+            that.set_date()
+        })
         that.$on('fetch_single_fiper_data', function(data) {
             Database.get('fiper').then(function(fiper) {
                 console.log(data)

@@ -56,8 +56,9 @@
             <!-- Only Date -->
             <div class="date-wrapper">
                 <q-datetime v-model="date_value" type="date" class="sm-full-width"></q-datetime>
-                <button class="green" @click="submitDate()">Submit</button>
             </div>
+            <button class="green" @click="submitDate()">Submit</button>
+            <button class="secondary outline" @click="setToCurrentDate()">Today</button>
         </q-modal>
         <router-view class="layout-view"></router-view>
     </q-layout>
@@ -84,7 +85,7 @@ export default {
                 page_subtitle: ''
             },
             date: {},
-            date_value: moment().format()
+            date_value: ''
 
         }
     },
@@ -95,6 +96,11 @@ export default {
 
     },
     methods: {
+        setToCurrentDate: function() {
+            var that = this
+            var current_date = new Date()
+            that.$set(that, 'date_value', current_date.toISOString())
+        },
         submitDate: function() {
             var that = this
             var date = new Date(that.date_value)
@@ -104,7 +110,9 @@ export default {
             that.$refs.mainMenu.close()
             var data = {
                 month: (date.getMonth() + 1).toString(),
-                year: date.getFullYear().toString()
+                year: date.getFullYear().toString(),
+                day: date.getDate(),
+                date_text: date.toISOString()
             }
             LocalStorage.set('current_date', data)
                 // window.location.reload()
@@ -123,17 +131,11 @@ export default {
             var _data = LocalStorage.get.item('current_date')
             if (_data != null) {
                 console.log('current_date is not null')
-                data.month = _data.month
-                data.year = _data.year
+                that.$set(that, 'date_value', _data.date_text)
             } else {
                 var _date = moment().format()
-                var date = new Date(_date)
-                data = {
-                    month: date.getMonth() + 1,
-                    year: date.getFullYear(),
-                }
+                that.$set(that, 'date_value', _date)
             }
-            that.$set(that, 'date', data)
 
             console.log(that.date)
         },
