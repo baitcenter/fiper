@@ -148,7 +148,7 @@ export default {
                     text: 'Income',
                 },
                 debts_and_loans: {
-                    text: 'Debs and Loans',
+                    text: 'Debts and Loans',
                 },
             },
             tempo_fiper_data: {
