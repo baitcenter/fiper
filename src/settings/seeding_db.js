@@ -1,6 +1,9 @@
 import router from 'root_dir/router'
+import PouchDB from 'pouchdb-browser'
+
 require('pouchdb-browser')
-var PouchDB = require('pouchdb-browser')
+// var PouchDB = require('pouchdb-browser')
+
 var Database = new PouchDB('local_db', { adapter: 'websql' })
 
 // Setup PIN CODE for the first time
