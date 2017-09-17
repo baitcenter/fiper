@@ -461,7 +461,7 @@ export default {
             })
         },
         get_fiper_type_img: function(fiper) {
-            return STATIC_URL + '/category/' + fiper.fiper_root_type + '_' + fiper.fiper_type + '.png'
+            return STATIC_URL + 'category/' + fiper.fiper_root_type + '_' + fiper.fiper_type + '.png'
         },
         fetch_fiper_data: function(date = null) {
             var that = this
