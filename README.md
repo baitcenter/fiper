@@ -5,15 +5,8 @@
 ## Build Setup
 
 ``` bash
-# install dependencies
+# install dependencies + prepare for android development environment https://quasar-framework.org/guide/cordova-preparation.html
 $ npm install
-
-# serve with hot reload at localhost:8080
-$ quasar dev
-
-# build for production with minification
-$ quasar build
-
-# lint code
-$ quasar lint
+$ cd cordorva/
+$ cordova run android
 ```
